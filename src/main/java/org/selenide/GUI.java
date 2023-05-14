@@ -131,7 +131,7 @@ public class GUI {
             e.printStackTrace();
         }
     }
-    private String extractDomain(String url) {
+    public String extractDomain(String url) {
         try {
             URI uri = new URI(url);
             String domain = uri.getHost();
