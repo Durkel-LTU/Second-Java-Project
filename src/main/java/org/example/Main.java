@@ -11,8 +11,15 @@ public class Main {
     private static final Logger logger = LoggerFactory.getLogger(Main.class);
 
     public static void main(String[] args) {
-        logger.info("Starting Logger");
 
+        logger.info("Starting Logger");
+        String targetURL ="https://ltu.se";
+        /*
+         * Getting username and password
+         */
+        GUI login = new GUI();
+        String[] credentials = login.getLoginCredentials(targetURL);
+        logger.info("Fetched credentials");
         /*
          * Open website LTU.se
          */
@@ -23,7 +30,7 @@ public class Main {
             // For automation, chrome browser wont shot if this is true.
             Configuration.headless = false;
 
-            open("https://ltu.se");
+            open(targetURL);
 
             if(title().equals("Luleå tekniska universitet, LTU")) {
                 logger.info("Successfully opened webpage.");
