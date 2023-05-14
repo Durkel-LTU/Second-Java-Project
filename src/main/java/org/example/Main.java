@@ -1,9 +1,14 @@
 package org.example;
 
+import com.codeborne.selenide.Configuration;
 import org.openqa.selenium.By;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.codeborne.selenide.Configuration;
+
+import javax.security.auth.login.LoginException;
+
+import java.util.Objects;
+
 import static com.codeborne.selenide.Selenide.*;
 
 public class Main {
@@ -32,7 +37,7 @@ public class Main {
 
             open(targetURL);
 
-            if(title().equals("Luleå tekniska universitet, LTU")) {
+            if(Objects.equals(title(), "Luleå tekniska universitet, LTU")) {
                 logger.info("Successfully opened webpage.");
             } else {
                 logger.error("Failed to open the webpage.");
@@ -67,6 +72,33 @@ public class Main {
         } catch (Exception e) {
             logger.error("Failed to open student page.");
         }
+        /*
+         * Find and click on "Logga in" button to go to the login page
+         */
+        try {
+            if ($(By.xpath("//a[contains(text(),'Logga in')]")).exists()) {
+                $(By.xpath("//a[contains(text(),'Logga in')]")).click();
+                logger.info("Clicked on 'Logga in' button.");
+            }
+        } catch (Exception e) {
+            logger.error("Failed to click on 'Logga in' button.");
+        }
+        /*
+         * Fill in the login form with credentials
+         */
+        try {
+            $(By.id("username")).setValue(credentials[0]);
+            $(By.id("password")).setValue(credentials[1]);
+            $(By.name("submit")).click();
+            if(Objects.equals(title(), "Aktuellt - ltu.se")) {
+                logger.info("Successfully logged in");
+            } else {
+                throw new LoginException("Failed to log in. Invalid credentials or login page not loaded.");
+            }
+        } catch (Exception e) {
+            logger.error("Failed to log in due to exception: {}", e.getMessage());
+        }
+
     }
 
 }
