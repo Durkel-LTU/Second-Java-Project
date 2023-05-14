@@ -37,6 +37,7 @@
             <groupId>com.codeborne</groupId>
             <artifactId>selenide</artifactId>
             <version>6.12.4</version>
+            <scope>compile</scope>
         </dependency>
 
         <dependency>

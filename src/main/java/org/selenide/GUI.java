@@ -1,4 +1,4 @@
-package org.example;
+package org.selenide;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
