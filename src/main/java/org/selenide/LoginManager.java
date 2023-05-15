@@ -23,13 +23,13 @@ public class LoginManager {
     public String[] getLoginCredentials(String url) {
         String username = null;
         String password = null;
-        String       domain = extractDomain(url);
+        String domain = extractDomain(url);
 
         if (domain == null) {
             throw new RuntimeException("Invalid URL: " + url);
         }
 
-        if (loginFileExists()) {
+        if (loginFileExists(domain)){
             int choice = JOptionPane.showConfirmDialog(null,
                     "Do you want to use saved login credentials?",
                     "Login credentials", JOptionPane.YES_NO_OPTION,
@@ -37,10 +37,13 @@ public class LoginManager {
 
             if (choice == JOptionPane.YES_OPTION) {
                 LOGGER.info("Reading login credentials from file");
-                JsonNode credentials = readCredentialsFromFile();
+                JsonNode credentials = readCredentialsFromFile(domain);
                 if (credentials != null) {
-                    username = credentials.get(domain + "Credentials").get("username").asText();
-                    password = credentials.get(domain + "Credentials").get("password").asText();
+                    JsonNode domainCredentials = credentials.get(domain + "Credentials");
+                    if (domainCredentials != null) {
+                        username = domainCredentials.get("username") != null ? domainCredentials.get("username").asText() : null;
+                        password = domainCredentials.get("password") != null ? domainCredentials.get("password").asText() : null;
+                    }
                 } else {
                     LOGGER.warning("Failed to read login credentials from file");
                 }
@@ -60,15 +63,15 @@ public class LoginManager {
         return new String[]{username, password};
     }
 
-    private boolean loginFileExists() {
-        File loginFile = new File(loginFilePath);
+    private boolean loginFileExists(String domain) {
+        File loginFile = new File(loginFilePath + domain + ".json");
         return loginFile.exists();
     }
 
-    private JsonNode readCredentialsFromFile() {
+    private JsonNode readCredentialsFromFile(String domain) {
         try {
             LOGGER.info("Reading login credentials from file");
-            File jsonFile = new File(loginFilePath);
+            File jsonFile = new File(loginFilePath + domain + ".json");
             ObjectMapper objectMapper = new ObjectMapper();
 
             return objectMapper.readTree(jsonFile);
