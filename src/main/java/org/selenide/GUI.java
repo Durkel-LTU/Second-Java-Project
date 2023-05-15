@@ -1,22 +1,18 @@
 package org.selenide;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.logging.FileHandler;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
+
 public class GUI {
     private static final Logger LOGGER = Logger.getLogger(GUI.class.getName());
+    private static final String LOGIN_FILE_PATH = determineLoginFilePath();
+
+    private LoginManager loginManager;
 
     static {
         try {
@@ -29,124 +25,42 @@ public class GUI {
         }
     }
 
+    public GUI() {
+        this.loginManager = new LoginManager(LOGIN_FILE_PATH);
+    }
+
     public String[] getLoginCredentials(String url) {
-        String username = null;
-        String password = null;
-        String domain = extractDomain(url);
-        String os = System.getProperty("os.name").toLowerCase();
-        String pathname = os.contains("win")
-                ? "C:" + File.separator + "temp" + File.separator + domain + ".json"
-                : os.contains("linux")
-                ? File.separator + "tmp" + File.separator + domain+ ".json"
-                : os.contains("mac")
-                ? "~/Library/Caches/"+domain+".json"
-                : null;
+        String[] credentials = loginManager.getLoginCredentials(url);
 
-        if (pathname == null) {
-            throw new RuntimeException("Unsupported OS: " + os);
-        }
+        if (credentials == null) {
+            // Prompt for credentials using GUI components if needed
 
-        Path parentDir = Path.of(pathname).getParent();
-        if (!Files.exists(parentDir)) {
-            int option = JOptionPane.showConfirmDialog(null,
-                    "The directory " + parentDir + " does not exist. Do you want to create it?",
-                    "Directory not found", JOptionPane.YES_NO_OPTION);
+            String username = JOptionPane.showInputDialog(null, "Username:");
+            String password = JOptionPane.showInputDialog(null, "Password:");
+            credentials = new String[]{username, password};
 
-            if (option == JOptionPane.YES_OPTION) {
-                try {
-                    Files.createDirectories(parentDir);
-                    JOptionPane.showMessageDialog(null,
-                            "Directory created successfully.");
-                } catch (IOException e) {
-                    JOptionPane.showMessageDialog(null,
-                            "Failed to create directory: " + parentDir,
-                            "Error", JOptionPane.ERROR_MESSAGE);
-                    LOGGER.log(Level.WARNING, "Failed to create directory: " + parentDir, e);
-                }
-            }
-        }
-
-        File loginFile = new File(pathname);
-        if (loginFile.exists()) {
-            int choice = JOptionPane.showConfirmDialog(null,
-                    "Do you want to use saved login credentials?",
-                    "Login credentials", JOptionPane.YES_NO_OPTION,
-                    JOptionPane.QUESTION_MESSAGE);
-
-            if (choice == JOptionPane.YES_OPTION) {
-                LOGGER.info("Reading login credentials from file");
-                JsonNode credentials = readCredentialsFromFile(pathname);
-                if (credentials != null) {
-                    username = credentials.get(domain+"Credentials").get("username").asText();
-                    password = credentials.get(domain+"Credentials").get("password").asText();
-                } else {
-                    LOGGER.warning("Failed to read login credentials from file");
-                }
-            }
-        }
-
-        if (username == null || password == null) {
-            LOGGER.info("Reading login credentials from Swing input");
-            username = JOptionPane.showInputDialog(null, "Username:");
-            password = JOptionPane.showInputDialog(null, "Password:");
             int saveChoice = JOptionPane.showConfirmDialog(null, "Do you want to save login credentials?", "Login credentials", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
             if (saveChoice == JOptionPane.YES_OPTION) {
-                saveCredentialsToFile(username, password, pathname,domain);
+
+                loginManager.saveCredentialsToFile(username, password, loginManager.extractDomain(url));
             }
         }
 
-
-        return new String[]{username, password};
+        return credentials;
     }
 
 
+    private static String determineLoginFilePath() {
+        String os = System.getProperty("os.name").toLowerCase();
 
-    private JsonNode readCredentialsFromFile(String pathname) {
-        try {
-            LOGGER.info("Reading login credentials from file");
-            File jsonFile = new
-                    File(pathname);
-            ObjectMapper objectMapper = new ObjectMapper();
-
-            return objectMapper.readTree(jsonFile);
-        } catch (IOException e) {
-            LOGGER.warning("Failed to read login credentials from file");
-            e.printStackTrace();
-            return null;
+        if (os.contains("win")) {
+            return "C:" + File.separator + "temp" + File.separator ;
+        } else if (os.contains("linux")) {
+            return File.separator + "tmp" + File.separator ;
+        } else if (os.contains("mac")) {
+            return "~/Library/Caches/";
+        } else {
+            throw new RuntimeException("Unsupported OS: " + os);
         }
     }
-
-    private void saveCredentialsToFile(String username, String password, String pathname, String domain) {
-        try {
-            LOGGER.info("Saving login credentials to file");
-            ObjectMapper objectMapper = new ObjectMapper();
-            ObjectNode rootNode = objectMapper.createObjectNode();
-            ObjectNode credentialsNode = objectMapper.createObjectNode();
-            credentialsNode.put("username", username);
-            credentialsNode.put("password", password);
-            rootNode.set(domain+"Credentials", credentialsNode);
-            objectMapper.writerWithDefaultPrettyPrinter().writeValue(new File(pathname), rootNode);
-        } catch (IOException e) {
-            LOGGER.warning("Failed to save login credentials to file");
-            e.printStackTrace();
-        }
-    }
-    public String extractDomain(String url) {
-        try {
-            URI uri = new URI(url);
-            String domain = uri.getHost();
-            if (domain != null) {
-                String[] parts = domain.split("\\.");
-                int lastIndex = parts.length - 1;
-                if (lastIndex >= 0) {
-                    return parts[lastIndex - 1];
-                }
-            }
-        } catch (URISyntaxException e) {
-            // hantera eventuella fel här
-        }
-        return null;
-    }
-
-
 }
