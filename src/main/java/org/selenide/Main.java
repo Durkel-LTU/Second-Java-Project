@@ -1,6 +1,6 @@
 package org.selenide;
 
-import com.codeborne.selenide.Configuration;
+import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
 import org.openqa.selenium.By;
@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.security.auth.login.LoginException;
 
+import java.io.File;
 import java.util.Objects;
 
 import static com.codeborne.selenide.Condition.text;
@@ -33,13 +34,7 @@ public class Main {
          */
         try {
             // Set the browser configuration
-            Configuration.browser = "chrome";
-
-            Configuration.browserSize = "1920x1080";
-
-            // For automation, chrome browser wont shot if this is true.
-            Configuration.headless = false;
-
+            BrowserConfig.setConfig();
             open(targetURL);
 
             if(Objects.equals(title(), "Luleå tekniska universitet, LTU")) {
@@ -64,7 +59,6 @@ public class Main {
         } catch (Exception e) {
             logger.error("Failed to accept cookies.");
         }
-
 
         /*
          * Find "Student" button and click it to redirect to LTU login.
@@ -136,7 +130,6 @@ public class Main {
      * Downloads the Transcripts from Ladok website.
      */
     public static void transcriptDownload() {
-
         try {
             if ($(By.xpath("//a[contains(text(),'Intyg')]")).exists()) {
                 $(By.xpath("//a[contains(text(),'Intyg')]")).click();
@@ -183,11 +176,18 @@ public class Main {
         }
 
         sleep(15000);
+        SelenideElement mobileMenuButton = $x("//button[@role='button']");
+
+        // Check if the mobile menu button is showing
+        boolean isMobileMenuButtonShowing = mobileMenuButton.is(Condition.visible);
 
         // Locate the link element
-        SelenideElement transcriptsLink = $x("//a[contains(text(), 'Transcripts') or contains(text(), 'Intyg')]");
+        SelenideElement transcriptsLink = $x("//a[contains(text(), 'Transcripts and certificates') or contains(text(), 'Intyg')]");
 
         try {
+            if (isMobileMenuButtonShowing)
+                mobileMenuButton.click();
+
             if (transcriptsLink.exists()) {
                 transcriptsLink.click();
                 logger.info("Successfully opened transcripts");
@@ -240,28 +240,24 @@ public class Main {
             logger.error("Cannot locate dropdown option for registration.");
         }
 
+        sleep(8000);
         // Locate all PDF links with wildcard
         ElementsCollection pdfLinks = $$x("//a[contains(@href, '/intyg/') and contains(@href, '/pdf')]");
 
+        //SelenideElement accordion = $x("//div[@role='list']");
+        //ElementsCollection accordionElements = accordion.$$x("//div[@class='ladok-list-kort-header-rubrik']");
+
         // Finds and downloads the first link, which should be latest created transcript.
         try {
-            if (pdfLinks.size() > 0) {
-                SelenideElement firstPdfLink = pdfLinks.first();
-                firstPdfLink.download();
+            SelenideElement firstPdfLink = pdfLinks.first();
+            firstPdfLink.click();
+            String link = firstPdfLink.getAttribute("href");
 
-                logger.info("Clicked on pdf link: " + firstPdfLink);
-            } else {
-                System.out.println("No PDF links found.");
-            }
+            // Download the file
+            assert link != null;
+            File downloadedFile = download(link);
         } catch (Exception e) {
             logger.error("Cannot download transcript");
         }
-    }
-
-    /**
-     * Searches for the exam time and creates a screenshot of the webpage.
-     */
-    public static void kronoxSearch() {
-
     }
 }
