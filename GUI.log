@@ -96,3 +96,11 @@ May 15, 2023 5:16:28 AM org.selenide.GUI getLoginCredentials
 INFO: Reading login credentials from file
 May 15, 2023 5:16:28 AM org.selenide.GUI readCredentialsFromFile
 INFO: Reading login credentials from file
+maj 15, 2023 9:22:40 FM org.selenide.GUI getLoginCredentials
+INFO: Reading login credentials from file
+maj 15, 2023 9:22:40 FM org.selenide.GUI readCredentialsFromFile
+INFO: Reading login credentials from file
+maj 15, 2023 9:23:37 FM org.selenide.GUI getLoginCredentials
+INFO: Reading login credentials from file
+maj 15, 2023 9:23:37 FM org.selenide.GUI readCredentialsFromFile
+INFO: Reading login credentials from file

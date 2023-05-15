@@ -77,8 +77,8 @@ public class GUI {
                 LOGGER.info("Reading login credentials from file");
                 JsonNode credentials = readCredentialsFromFile(pathname);
                 if (credentials != null) {
-                    username = credentials.get("Credentials").get("username").asText();
-                    password = credentials.get("Credentials").get("password").asText();
+                    username = credentials.get(domain+"Credentials").get("username").asText();
+                    password = credentials.get(domain+"Credentials").get("password").asText();
                 } else {
                     LOGGER.warning("Failed to read login credentials from file");
                 }
