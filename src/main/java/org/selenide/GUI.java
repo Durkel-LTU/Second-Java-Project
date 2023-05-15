@@ -91,7 +91,7 @@ public class GUI {
             password = JOptionPane.showInputDialog(null, "Password:");
             int saveChoice = JOptionPane.showConfirmDialog(null, "Do you want to save login credentials?", "Login credentials", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
             if (saveChoice == JOptionPane.YES_OPTION) {
-                saveCredentialsToFile(username, password, pathname);
+                saveCredentialsToFile(username, password, pathname,domain);
             }
         }
 
@@ -116,7 +116,7 @@ public class GUI {
         }
     }
 
-    private void saveCredentialsToFile(String username, String password, String pathname) {
+    private void saveCredentialsToFile(String username, String password, String pathname, String domain) {
         try {
             LOGGER.info("Saving login credentials to file");
             ObjectMapper objectMapper = new ObjectMapper();
@@ -124,7 +124,7 @@ public class GUI {
             ObjectNode credentialsNode = objectMapper.createObjectNode();
             credentialsNode.put("username", username);
             credentialsNode.put("password", password);
-            rootNode.set("Credentials", credentialsNode);
+            rootNode.set(domain+"Credentials", credentialsNode);
             objectMapper.writerWithDefaultPrettyPrinter().writeValue(new File(pathname), rootNode);
         } catch (IOException e) {
             LOGGER.warning("Failed to save login credentials to file");
@@ -136,11 +136,17 @@ public class GUI {
             URI uri = new URI(url);
             String domain = uri.getHost();
             if (domain != null) {
-                return domain.startsWith("www.") ? domain.substring(4) : domain;
+                String[] parts = domain.split("\\.");
+                int lastIndex = parts.length - 1;
+                if (lastIndex >= 0) {
+                    return parts[lastIndex - 1];
+                }
             }
         } catch (URISyntaxException e) {
             // hantera eventuella fel här
         }
         return null;
     }
+
+
 }
