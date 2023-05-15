@@ -1,6 +1,7 @@
 package org.selenide;
 
 import com.codeborne.selenide.Configuration;
+import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
 import org.openqa.selenium.By;
 import org.slf4j.Logger;
@@ -197,7 +198,64 @@ public class Main {
             logger.error("Cannot locate ladok webpage.");
         }
 
-        sleep(15000);
+        // We sleep for webpage to fully load, as it loads in browser,
+        // and once again the webpages content, which can throw possible errors for future steps.
+        sleep(5000);
+
+        // Check for button, both in english and swedish.
+        SelenideElement transcriptsButton = $x("//button[contains(text(), 'Create') or contains(text(), 'Skapa Intyg')]");
+        try {
+            if (transcriptsButton.exists()) {
+                transcriptsButton.click();
+                logger.info("Successfully created transcript.");
+            } else {
+                logger.error("Cannot create transcripts");
+            }
+        } catch (Exception e) {
+            logger.error("Error creating the transcripts.");
+        }
+
+        /*
+         * Opens dropdown and selects the correct option, then downloads the document.
+         */
+        // Locate the dropdown element
+        SelenideElement dropdown = $x("//*[@id='intygstyp']");
+        SelenideElement createTranscriptsButton = $x("/html/body/ladok-root/div/main/div/ladok-skapa-intyg/ladok-card/div/div/ladok-card-body/div[3]/div/form/div[3]/div/ladok-skapa-intyg-knapprad/div/button[1]/span");
+        // Open the dropdown
+        dropdown.click();
+
+        try {
+            // Select the option with the value "1: Object", which is registration.
+            SelenideElement option = $("option[value='1: Object']");
+            option.click();
+
+            // Download the transcripts if button is there.
+            if (createTranscriptsButton.exists()) {
+                createTranscriptsButton.click();
+                logger.info("Downloaded certificate of registration successfully.");
+            } else {
+                logger.error("Cannot locate button to download certificate of registration.");
+            }
+        } catch (Exception e) {
+            logger.error("Cannot locate dropdown option for registration.");
+        }
+
+        // Locate all PDF links with wildcard
+        ElementsCollection pdfLinks = $$x("//a[contains(@href, '/intyg/') and contains(@href, '/pdf')]");
+
+        // Finds and downloads the first link, which should be latest created transcript.
+        try {
+            if (pdfLinks.size() > 0) {
+                SelenideElement firstPdfLink = pdfLinks.first();
+                firstPdfLink.download();
+
+                logger.info("Clicked on pdf link: " + firstPdfLink);
+            } else {
+                System.out.println("No PDF links found.");
+            }
+        } catch (Exception e) {
+            logger.error("Cannot download transcript");
+        }
     }
 
     /**
