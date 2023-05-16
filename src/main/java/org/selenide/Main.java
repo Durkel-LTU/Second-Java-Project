@@ -1,21 +1,21 @@
 package org.selenide;
 
 import com.codeborne.selenide.*;
+import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.imageio.ImageIO;
 import javax.security.auth.login.LoginException;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
 import java.util.Objects;
-import org.openqa.selenium.*;
+import com.codeborne.selenide.Screenshots;
+import com.codeborne.selenide.WebDriverRunner;
 import static com.codeborne.selenide.Condition.text;
 import static com.codeborne.selenide.Selectors.byXpath;
 import static com.codeborne.selenide.Selenide.*;
-import static com.codeborne.selenide.WebDriverRunner.getWebDriver;
 
 public class Main {
 
@@ -107,7 +107,7 @@ public class Main {
 
 
         // Open transcripts download on new tab, download then close it.
-        // transcriptDownload();
+        transcriptDownload();
 
         kronoxSearch();
     }
@@ -115,7 +115,7 @@ public class Main {
     /**
      * Downloads the Transcripts from Ladok website.
      */
-    public static <Dimension> void transcriptDownload() {
+    public static void transcriptDownload() {
         try {
             if ($(byXpath("//a[contains(text(),'Intyg')]")).exists()) {
                 $(byXpath("//a[contains(text(),'Intyg')]")).click();
@@ -168,13 +168,15 @@ public class Main {
         // Get the current window size
         Configuration.browserSize = String.valueOf(true); // Använd om du vill starta webbläsaren med maximal fönsterstorlek
 
-        Dimension windowSize = (Dimension) $("body").getSize();
+        int windowWidth = WebDriverRunner.getWebDriver().manage().window().getSize().getWidth();
 
-// Locate the link element
+        System.out.println("Window width is "+windowWidth);
+
+        // Locate the link element
         SelenideElement transcriptsLink = $x("//a[contains(text(), 'Transcripts') or contains(text(), 'Intyg')]");
 
         try {
-            if ((int)windowSize < 1600) {
+            if (windowWidth < 1600) {
                 logger.info("Mobile menu button is showing.");
                 mobileMenuButton.click();
             } else {
@@ -227,7 +229,7 @@ public class Main {
                 createTranscriptsButton.click();
                 logger.info("Downloaded certificate of registration successfully.");
             } else {
-                logger.error("Cannot locate button to download certificate of registration.");
+                logger.error("Cannot locate button to create certificate of registration.");
             }
         } catch (Exception e) {
             logger.error("Cannot locate dropdown option for registration.");
@@ -246,18 +248,7 @@ public class Main {
                 // Download the file
                 assert link != null;
                 File downloadedFile = download(link);
-                logger.info("Downloading transcripts.");
-
-                // Move the downloaded file to a desired destination
-                String destinationDirectoryPath = "path/to/destination/folder";
-                String destinationFilePath = destinationDirectoryPath + File.separator + downloadedFile.getName();
-                Path sourcePath = downloadedFile.toPath();
-                Path destinationPath = Path.of(destinationFilePath);
-                Files.move(sourcePath, destinationPath, StandardCopyOption.REPLACE_EXISTING);
-                logger.info("Transcripts downloaded successfully.");
-
-                // Print the path of the downloaded file
-                logger.info("Downloaded file path: {}", destinationFilePath);
+                logger.info("Downloading transcripts. File URL:" + downloadedFile);
             } else {
                 logger.error("No PDF links found to download transcripts.");
             }
@@ -266,17 +257,12 @@ public class Main {
         }
 
         sleep(8000);
-
-        WebDriver driver = getWebDriver();
-        String currentWindowHandle = driver.getWindowHandle();
-        switchTo().window(currentWindowHandle);
-        closeWindow();
-
+        Selenide.closeWindow();
         // Switch back to the default tab
-        driver.switchTo().window(driver.getWindowHandles().iterator().next());
+        Selenide.switchTo().window(WebDriverRunner.getWebDriver().getWindowHandles().iterator().next());
     }
 
-    public static void kronoxSearch() throws IOException {
+    public static void kronoxSearch() {
         /*
          * Open "Examination" dropdown and click the "Examination Schedule" menu button.
          */
@@ -336,23 +322,33 @@ public class Main {
 
         //SelenideElement targetWindow = (SelenideElement) Selenide.switchTo().window("Schema");
 
-// Take the screenshot
+        switchTo().window("Schema");
+        // Take a screenshot of the whole page
+        File screenshot = Screenshots.takeScreenShotAsFile();
+
+        // Specify the path and name of the screenshot file
         String destinationDirectoryPath = System.getProperty("user.dir") + File.separator + "target" + File.separator + "screenshots";
-        String destinationFilePath = destinationDirectoryPath + File.separator + "final_examination.jpg";
+        String screenshotPath = destinationDirectoryPath + File.separator + "final_examination.jpg";
 
-// Save the screenshot to the specified path
-        File screenshotFile = Selenide.screenshot(OutputType.FILE);
-        assert screenshotFile != null;
-        Path sourcePath = screenshotFile.toPath();
-        Path destinationPath = Path.of(destinationFilePath);
-        Files.move(sourcePath, destinationPath, StandardCopyOption.REPLACE_EXISTING);
+        // Convert the screenshot to a JPG file
+        File screenshotJpg = new File(screenshotPath);
+        try {
+            // Save the screenshot as a JPG file
+            assert screenshot != null;
+            BufferedImage screenshotImage = ImageIO.read(screenshot);
+            ImageIO.write(screenshotImage, "jpg", screenshotJpg);
+            FileUtils.copyFile(screenshot, screenshotJpg);
+            logger.info("Image saved at "+screenshotPath);
+        } catch (IOException e) {
+            e.printStackTrace();
+            logger.error("Image cannot be saved");
+        }
 
-          Selenide.closeWindow();
+        sleep(5000);
+        Selenide.closeWindow();
 
-        GUI.displayMove(destinationFilePath, "screenshot" + screenshotFile);
 
-
-// Switch back to the default tab
+        // Switch back to the default tab
         Selenide.switchTo().window(WebDriverRunner.getWebDriver().getWindowHandles().iterator().next());
         try {
             Thread.sleep(5000);
