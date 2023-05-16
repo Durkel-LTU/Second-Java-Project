@@ -1,25 +1,29 @@
 package org.selenide;
 
-import com.codeborne.selenide.Condition;
-import com.codeborne.selenide.ElementsCollection;
-import com.codeborne.selenide.SelenideElement;
-import org.openqa.selenium.By;
+import com.codeborne.selenide.*;
+import org.openqa.selenium.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.security.auth.login.LoginException;
 
 import java.io.File;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.Objects;
 
 import static com.codeborne.selenide.Condition.text;
 import static com.codeborne.selenide.Selenide.*;
+import static com.codeborne.selenide.WebDriverRunner.getWebDriver;
 
 public class Main {
 
     private static final Logger logger = LoggerFactory.getLogger(Main.class);
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
 
         logger.info("Starting Logger");
         String targetURL ="https://ltu.se";
@@ -99,31 +103,9 @@ public class Main {
         }
 
         // Open transcripts download on new tab, download then close it.
-        transcriptDownload();
+        // transcriptDownload();
 
-        /*
-         * Open "Examination" dropdown and click the "Examination Schedule" menu button.
-         */
-        try {
-            if(Objects.equals(title(), "Update - ltu.se") || Objects.equals(title(), "Aktuellt - ltu.se")) {
-                logger.info("Correct website is open");
-                if ($(By.xpath("//a[contains(text(),'Tentamen')]")).exists()) {
-                    $(By.xpath("//a[contains(text(),'Tentamen')]")).click();
-                    logger.info("Successfully opened the 'Examination' dropdown");
-                    if ($(By.xpath("//a[contains(text(),'Tentamensschema')]")).exists()) {
-                        $(By.xpath("//a[contains(text(),'Tentamensschema')]")).click();
-                        logger.info("Successfully clicked the 'Examination' button");
-
-                    }
-                } else {
-                    logger.error("Cannot find the 'Examination' dropdown button.");
-                }
-            } else {
-                logger.error("Failed to open the correct website.");
-            }
-        } catch (Exception e) {
-            logger.error("Failed to log in due to exception: {}", e.getMessage());
-        }
+        kronoxSearch();
     }
 
     /**
@@ -176,17 +158,23 @@ public class Main {
         }
 
         sleep(15000);
+
         SelenideElement mobileMenuButton = $x("//button[@role='button']");
 
-        // Check if the mobile menu button is showing
-        boolean isMobileMenuButtonShowing = mobileMenuButton.is(Condition.visible);
+        // Get the current window size
+        Dimension windowSize = getWebDriver().manage().window().getSize();
 
         // Locate the link element
-        SelenideElement transcriptsLink = $x("//a[contains(text(), 'Transcripts and certificates') or contains(text(), 'Intyg')]");
+        SelenideElement transcriptsLink = $x("//a[contains(text(), 'Transcripts') or contains(text(), 'Intyg')]");
+
 
         try {
-            if (isMobileMenuButtonShowing)
+            if (windowSize.getWidth() < 1600) {
+                logger.info("Mobile menu button is showing.");
                 mobileMenuButton.click();
+            } else {
+                logger.info("Mobile menu not showing");
+            }
 
             if (transcriptsLink.exists()) {
                 transcriptsLink.click();
@@ -240,24 +228,112 @@ public class Main {
             logger.error("Cannot locate dropdown option for registration.");
         }
 
-        sleep(8000);
         // Locate all PDF links with wildcard
         ElementsCollection pdfLinks = $$x("//a[contains(@href, '/intyg/') and contains(@href, '/pdf')]");
-
-        //SelenideElement accordion = $x("//div[@role='list']");
-        //ElementsCollection accordionElements = accordion.$$x("//div[@class='ladok-list-kort-header-rubrik']");
 
         // Finds and downloads the first link, which should be latest created transcript.
         try {
             SelenideElement firstPdfLink = pdfLinks.first();
-            firstPdfLink.click();
             String link = firstPdfLink.getAttribute("href");
 
             // Download the file
             assert link != null;
             File downloadedFile = download(link);
+            logger.info("Downloading transcripts.");
         } catch (Exception e) {
             logger.error("Cannot download transcript");
         }
+
+        sleep(8000);
+
+        WebDriver driver = getWebDriver();
+        String currentWindowHandle = driver.getWindowHandle();
+        driver.switchTo().window(currentWindowHandle);
+        driver.close();
+
+        // Switch back to the default tab
+        driver.switchTo().window(driver.getWindowHandles().iterator().next());
+    }
+
+    public static void kronoxSearch() throws IOException {
+        /*
+         * Open "Examination" dropdown and click the "Examination Schedule" menu button.
+         */
+        try {
+            if(Objects.equals(title(), "Update - ltu.se") || Objects.equals(title(), "Aktuellt - ltu.se")) {
+                logger.info("Correct website is open");
+                if ($(By.xpath("//a[contains(text(),'Tentamen')]")).exists()) {
+                    $(By.xpath("//a[contains(text(),'Tentamen')]")).click();
+                    logger.info("Successfully opened the 'Examination' dropdown");
+                    if ($(By.xpath("//a[contains(text(),'Tentamensschema')]")).exists()) {
+                        $(By.xpath("//a[contains(text(),'Tentamensschema')]")).click();
+                        logger.info("Successfully clicked the 'Examination schedule' button");
+
+                    }
+                } else {
+                    logger.error("Cannot find the 'Examination' dropdown button.");
+                }
+            } else {
+                logger.error("Failed to open the correct website.");
+            }
+        } catch (Exception e) {
+            logger.error("Failed to log in due to exception: {}", e.getMessage());
+        }
+
+
+        // Switches Selenide to the Ladok website, checking if the title of the website exists
+        switchTo().window("KronoX Web");
+        try {
+            if ($(By.xpath("//*[@id='enkel_sokfalt']")).exists()) {
+                $(By.xpath("//*[@id='enkel_sokfalt']")).setValue("i0015n");
+                logger.info("Successfully opened the 'Examination' dropdown");
+                if ($(By.xpath("//*[@id='enkel_sokknapp']")).exists()) {
+                    $(By.xpath("//*[@id='enkel_sokknapp']")).click();
+                    logger.info("Searching for i0015n exams");
+
+                }
+            } else {
+                logger.error("Cannot find the search bar");
+            }
+
+        } catch (Exception e) {
+            logger.error("Cannot locate Kronox website.");
+        }
+
+        sleep(5000);
+
+        // Find all the list items using the specified XPath
+        // Locate all PDF links with wildcard
+        ElementsCollection listItems = $$x("//a[contains(@href, 'schema.ltu.se') and contains(@href, '/setup/')]");
+
+        try {
+            listItems.first().click();
+            logger.info("Opened first link.");
+        } catch ( Exception e) {
+            logger.error("Cannot find first element");
+        }
+
+        WebDriver driver = getWebDriver();
+        switchTo().window("Schema");
+        // Take the screenshot
+        String destinationDirectoryPath = System.getProperty("user.dir") + File.separator + "target" + File.separator + "screenshots";
+        String destinationFilePath = destinationDirectoryPath + File.separator + "final_examination.jpg";
+
+
+        // Save the screenshot to the specified path
+        File file = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
+        Path sourcePath = Path.of(file.toURI());
+        Path destinationPath = Path.of(destinationFilePath);
+        Files.move(sourcePath, destinationPath, StandardCopyOption.REPLACE_EXISTING);
+        System.out.println("Image file moved to: " + destinationFilePath);
+        System.out.println("screenshot"+file);
+
+        String currentWindowHandle = driver.getWindowHandle();
+        driver.switchTo().window(currentWindowHandle);
+        driver.close();
+
+        // Switch back to the default tab
+        driver.switchTo().window(driver.getWindowHandles().iterator().next());
+        sleep(5000);
     }
 }

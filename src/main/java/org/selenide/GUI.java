@@ -58,7 +58,7 @@ public class GUI {
         } else if (os.contains("linux")) {
             return File.separator + "tmp" + File.separator ;
         } else if (os.contains("mac")) {
-            return "~/Library/Caches/";
+            return "/Library/Caches/";
         } else {
             throw new RuntimeException("Unsupported OS: " + os);
         }
