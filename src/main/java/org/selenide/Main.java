@@ -1,21 +1,19 @@
 package org.selenide;
 
 import com.codeborne.selenide.*;
-import org.openqa.selenium.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.security.auth.login.LoginException;
-
 import java.io.File;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.Objects;
-
+import org.openqa.selenium.*;
 import static com.codeborne.selenide.Condition.text;
+import static com.codeborne.selenide.Selectors.byXpath;
 import static com.codeborne.selenide.Selenide.*;
 import static com.codeborne.selenide.WebDriverRunner.getWebDriver;
 
@@ -56,8 +54,9 @@ public class Main {
          */
         logger.info("Finding and accept all cookies on website");
         try {
-            if ($(By.xpath("//button[@id='CybotCookiebotDialogBodyLevelButtonLevelOptinAllowAll']")).exists()) {
-                $(By.xpath("//button[@id='CybotCookiebotDialogBodyLevelButtonLevelOptinAllowAll']")).click();
+            SelenideElement cookiesButton = $(byXpath("//button[@id='CybotCookiebotDialogBodyLevelButtonLevelOptinAllowAll']"));
+            if (cookiesButton.exists()) {
+                cookiesButton.click();
                 logger.info("Successfully accepted cookies on website.");
             }
         } catch (Exception e) {
@@ -68,32 +67,36 @@ public class Main {
          * Find "Student" button and click it to redirect to LTU login.
          */
         try {
-            if ($(By.xpath("/html/body/header/div[2]/div[1]/div[1]/div[3]/div/a[1]")).exists()) {
-                $(By.xpath("/html/body/header/div[2]/div[1]/div[1]/div[3]/div/a[1]")).click();
+            SelenideElement studentButton = $(byXpath("/html/body/header/div[2]/div[1]/div[1]/div[3]/div/a[1]"));
+            if (studentButton.exists()) {
+                studentButton.click();
                 logger.info("Opened 'Student' page.");
             }
         } catch (Exception e) {
             logger.error("Failed to open student page.");
         }
+
         /*
          * Find and click on "Logga in" button to go to the login page
          */
         try {
-            if ($(By.xpath("//a[contains(text(),'Logga in')]")).exists()) {
-                $(By.xpath("//a[contains(text(),'Logga in')]")).click();
+            SelenideElement loginButton = $(byXpath("//a[contains(text(),'Logga in')]"));
+            if (loginButton.exists()) {
+                loginButton.click();
                 logger.info("Clicked on 'Logga in' button.");
             }
         } catch (Exception e) {
             logger.error("Failed to click on 'Logga in' button.");
         }
+
         /*
          * Fill in the login form with credentials
          */
         try {
-            $(By.id("username")).setValue(credentials[0]);
-            $(By.id("password")).setValue(credentials[1]);
-            $(By.name("submit")).click();
-            if(Objects.equals(title(), "Aktuellt - ltu.se") || Objects.equals(title(), "Update - ltu.se")) {
+            $("#username").setValue(credentials[0]);
+            $("#password").setValue(credentials[1]);
+            $("[name='submit']").click();
+            if (Objects.equals(title(), "Aktuellt - ltu.se") || Objects.equals(title(), "Update - ltu.se")) {
                 logger.info("Successfully logged in");
             } else {
                 throw new LoginException("Failed to log in. Invalid credentials or login page not loaded.");
@@ -101,6 +104,7 @@ public class Main {
         } catch (Exception e) {
             logger.error("Failed to log in due to exception: {}", e.getMessage());
         }
+
 
         // Open transcripts download on new tab, download then close it.
         // transcriptDownload();
@@ -111,10 +115,10 @@ public class Main {
     /**
      * Downloads the Transcripts from Ladok website.
      */
-    public static void transcriptDownload() {
+    public static <Dimension> void transcriptDownload() {
         try {
-            if ($(By.xpath("//a[contains(text(),'Intyg')]")).exists()) {
-                $(By.xpath("//a[contains(text(),'Intyg')]")).click();
+            if ($(byXpath("//a[contains(text(),'Intyg')]")).exists()) {
+                $(byXpath("//a[contains(text(),'Intyg')]")).click();
                 logger.info("Successfully opened Ladok website on a new tab");
                 // Switches Selenide to the Ladok website, checking if the title of the website exists
                 switchTo().window("Studentwebb");
@@ -144,8 +148,8 @@ public class Main {
                 searchBar.setValue("Luleå");
                 // Wait 5 seconds for results to appear
                 sleep(5000);
-                if ($(By.xpath("//a[contains(@class, 'institution')]")).exists()) {
-                    $(By.xpath("//a[contains(@class, 'institution')]")).click();
+                if ($(byXpath("//a[contains(@class, 'institution')]")).exists()) {
+                    $(byXpath("//a[contains(@class, 'institution')]")).click();
                     logger.info("Successfully opened LTU Ladok registry");
                 } else {
                     logger.error("Cannot locate Luleå on search list.");
@@ -162,14 +166,15 @@ public class Main {
         SelenideElement mobileMenuButton = $x("//button[@role='button']");
 
         // Get the current window size
-        Dimension windowSize = getWebDriver().manage().window().getSize();
+        Configuration.browserSize = String.valueOf(true); // Använd om du vill starta webbläsaren med maximal fönsterstorlek
 
-        // Locate the link element
+        Dimension windowSize = (Dimension) $("body").getSize();
+
+// Locate the link element
         SelenideElement transcriptsLink = $x("//a[contains(text(), 'Transcripts') or contains(text(), 'Intyg')]");
 
-
         try {
-            if (windowSize.getWidth() < 1600) {
+            if ((int)windowSize < 1600) {
                 logger.info("Mobile menu button is showing.");
                 mobileMenuButton.click();
             } else {
@@ -233,23 +238,39 @@ public class Main {
 
         // Finds and downloads the first link, which should be latest created transcript.
         try {
-            SelenideElement firstPdfLink = pdfLinks.first();
-            String link = firstPdfLink.getAttribute("href");
+            // Click on the first PDF link to download the transcript
+            if (pdfLinks.size() > 0) {
+                SelenideElement firstPdfLink = pdfLinks.first();
+                String link = firstPdfLink.getAttribute("href");
 
-            // Download the file
-            assert link != null;
-            File downloadedFile = download(link);
-            logger.info("Downloading transcripts.");
+                // Download the file
+                assert link != null;
+                File downloadedFile = download(link);
+                logger.info("Downloading transcripts.");
+
+                // Move the downloaded file to a desired destination
+                String destinationDirectoryPath = "path/to/destination/folder";
+                String destinationFilePath = destinationDirectoryPath + File.separator + downloadedFile.getName();
+                Path sourcePath = downloadedFile.toPath();
+                Path destinationPath = Path.of(destinationFilePath);
+                Files.move(sourcePath, destinationPath, StandardCopyOption.REPLACE_EXISTING);
+                logger.info("Transcripts downloaded successfully.");
+
+                // Print the path of the downloaded file
+                logger.info("Downloaded file path: {}", destinationFilePath);
+            } else {
+                logger.error("No PDF links found to download transcripts.");
+            }
         } catch (Exception e) {
-            logger.error("Cannot download transcript");
+            logger.error("Error occurred while downloading transcripts: {}", e.getMessage());
         }
 
         sleep(8000);
 
         WebDriver driver = getWebDriver();
         String currentWindowHandle = driver.getWindowHandle();
-        driver.switchTo().window(currentWindowHandle);
-        driver.close();
+        switchTo().window(currentWindowHandle);
+        closeWindow();
 
         // Switch back to the default tab
         driver.switchTo().window(driver.getWindowHandles().iterator().next());
@@ -262,11 +283,11 @@ public class Main {
         try {
             if(Objects.equals(title(), "Update - ltu.se") || Objects.equals(title(), "Aktuellt - ltu.se")) {
                 logger.info("Correct website is open");
-                if ($(By.xpath("//a[contains(text(),'Tentamen')]")).exists()) {
-                    $(By.xpath("//a[contains(text(),'Tentamen')]")).click();
+                if ($(byXpath("//a[contains(text(),'Tentamen')]")).exists()) {
+                    $(byXpath("//a[contains(text(),'Tentamen')]")).click();
                     logger.info("Successfully opened the 'Examination' dropdown");
-                    if ($(By.xpath("//a[contains(text(),'Tentamensschema')]")).exists()) {
-                        $(By.xpath("//a[contains(text(),'Tentamensschema')]")).click();
+                    if ($(byXpath("//a[contains(text(),'Tentamensschema')]")).exists()) {
+                        $(byXpath("//a[contains(text(),'Tentamensschema')]")).click();
                         logger.info("Successfully clicked the 'Examination schedule' button");
 
                     }
@@ -284,11 +305,11 @@ public class Main {
         // Switches Selenide to the Ladok website, checking if the title of the website exists
         switchTo().window("KronoX Web");
         try {
-            if ($(By.xpath("//*[@id='enkel_sokfalt']")).exists()) {
-                $(By.xpath("//*[@id='enkel_sokfalt']")).setValue("i0015n");
+            if ($(byXpath("//*[@id='enkel_sokfalt']")).exists()) {
+                $(byXpath("//*[@id='enkel_sokfalt']")).setValue("i0015n");
                 logger.info("Successfully opened the 'Examination' dropdown");
-                if ($(By.xpath("//*[@id='enkel_sokknapp']")).exists()) {
-                    $(By.xpath("//*[@id='enkel_sokknapp']")).click();
+                if ($(byXpath("//*[@id='enkel_sokknapp']")).exists()) {
+                    $(byXpath("//*[@id='enkel_sokknapp']")).click();
                     logger.info("Searching for i0015n exams");
 
                 }
@@ -313,25 +334,30 @@ public class Main {
             logger.error("Cannot find first element");
         }
 
-        WebDriver driver = getWebDriver();
-        switchTo().window("Schema");
-        // Take the screenshot
+        //SelenideElement targetWindow = (SelenideElement) Selenide.switchTo().window("Schema");
+
+// Take the screenshot
         String destinationDirectoryPath = System.getProperty("user.dir") + File.separator + "target" + File.separator + "screenshots";
         String destinationFilePath = destinationDirectoryPath + File.separator + "final_examination.jpg";
 
-
-        // Save the screenshot to the specified path
-        File file = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
-        Path sourcePath = Path.of(file.toURI());
+// Save the screenshot to the specified path
+        File screenshotFile = Selenide.screenshot(OutputType.FILE);
+        assert screenshotFile != null;
+        Path sourcePath = screenshotFile.toPath();
         Path destinationPath = Path.of(destinationFilePath);
         Files.move(sourcePath, destinationPath, StandardCopyOption.REPLACE_EXISTING);
-        String currentWindowHandle = driver.getWindowHandle();
-        driver.switchTo().window(currentWindowHandle);
-        driver.close();
-        GUI.displayMove(destinationFilePath, "screenshot"+file);
 
-        // Switch back to the default tab
-        driver.switchTo().window(driver.getWindowHandles().iterator().next());
-        sleep(5000);
+          Selenide.closeWindow();
+
+        GUI.displayMove(destinationFilePath, "screenshot" + screenshotFile);
+
+
+// Switch back to the default tab
+        Selenide.switchTo().window(WebDriverRunner.getWebDriver().getWindowHandles().iterator().next());
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
