@@ -17,6 +17,7 @@ import static com.codeborne.selenide.Condition.text;
 import static com.codeborne.selenide.Selectors.byXpath;
 import static com.codeborne.selenide.Selenide.*;
 
+
 public class Main {
 
     private static final Logger logger = LoggerFactory.getLogger(Main.class);
@@ -165,9 +166,6 @@ public class Main {
 
         SelenideElement mobileMenuButton = $x("//button[@role='button']");
 
-        // Get the current window size
-        Configuration.browserSize = String.valueOf(true); // Använd om du vill starta webbläsaren med maximal fönsterstorlek
-
         int windowWidth = WebDriverRunner.getWebDriver().manage().window().getSize().getWidth();
 
         System.out.println("Window width is "+windowWidth);
@@ -220,9 +218,14 @@ public class Main {
         dropdown.click();
 
         try {
-            // Select the option with the value "1: Object", which is registration.
-            SelenideElement option = $("option[value='1: Object']");
-            option.click();
+            if(dropdown.exists()) {
+                // Select the option with the value "1: Object", which is registration.
+                SelenideElement option = $("option[value='1: Object']");
+                option.click();
+                logger.info("Clicked on option in dropdown menu");
+            } else {
+                logger.error("Cannot find dropdown menu");
+            }
 
             // Download the transcripts if button is there.
             if (createTranscriptsButton.exists()) {
@@ -238,10 +241,22 @@ public class Main {
         // Locate all PDF links with wildcard
         ElementsCollection pdfLinks = $$x("//a[contains(@href, '/intyg/') and contains(@href, '/pdf')]");
 
+        // Get window title
+        String windowTitle = Selenide.title();
+
         // Finds and downloads the first link, which should be latest created transcript.
         try {
-            // Click on the first PDF link to download the transcript
+            while (true) {
+                if (windowTitle.contains("Intyg") || windowTitle.contains("Transcripts")) {
+                    break;
+                }
+                Selenide.sleep(2000);
+                logger.info("Window title is: " + windowTitle);
+                logger.info("Website not updated, waiting 2 seconds.");
+            }
+            logger.info("Correct window for downloading pdf.");
             if (pdfLinks.size() > 0) {
+                logger.info("Located " + pdfLinks.size() + " links");
                 SelenideElement firstPdfLink = pdfLinks.first();
                 String link = firstPdfLink.getAttribute("href");
 
@@ -356,4 +371,5 @@ public class Main {
             throw new RuntimeException(e);
         }
     }
+
 }
