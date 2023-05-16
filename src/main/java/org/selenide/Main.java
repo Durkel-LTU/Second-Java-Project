@@ -325,12 +325,10 @@ public class Main {
         Path sourcePath = Path.of(file.toURI());
         Path destinationPath = Path.of(destinationFilePath);
         Files.move(sourcePath, destinationPath, StandardCopyOption.REPLACE_EXISTING);
-        System.out.println("Image file moved to: " + destinationFilePath);
-        System.out.println("screenshot"+file);
-
         String currentWindowHandle = driver.getWindowHandle();
         driver.switchTo().window(currentWindowHandle);
         driver.close();
+        GUI.displayMove(destinationFilePath, "screenshot"+file);
 
         // Switch back to the default tab
         driver.switchTo().window(driver.getWindowHandles().iterator().next());

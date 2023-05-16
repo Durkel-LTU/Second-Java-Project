@@ -63,4 +63,9 @@ public class GUI {
             throw new RuntimeException("Unsupported OS: " + os);
         }
     }
+    public static void displayMove(String destinationFilePath, String fileName) {
+        JOptionPane.showMessageDialog(null, "Image file moved to: " + destinationFilePath+"\nScreenshot saved as " + fileName);
+
+
+    }
 }
