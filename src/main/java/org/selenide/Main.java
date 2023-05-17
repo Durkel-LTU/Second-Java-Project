@@ -25,17 +25,11 @@ public class Main {
 
         logger.info("Starting Logger");
         String targetURL = "https://ltu.se";
-        /*
-         * Getting username and password
-         */
         GUI login = new GUI();
         String[] credentials = login.getLoginCredentials(targetURL);
         logger.info("Fetched credentials");
-        /*
-         * Open website LTU.se
-         */
+
         try {
-            // Set the browser configuration
             BrowserConfig.setConfig();
             open(targetURL);
 
@@ -49,36 +43,10 @@ public class Main {
             logger.error("Failed to open website");
         }
 
-        /*
-         * Finding cookies modal and accepting it
-         */
-        logger.info("Finding and accept all cookies on website");
-        try {
-            SelenideElement cookiesButton = $(byXpath("//button[@id='CybotCookiebotDialogBodyLevelButtonLevelOptinAllowAll']"));
-            if (cookiesButton.exists()) {
-                cookiesButton.click();
-                logger.info("Successfully accepted cookies on website.");
-            }
-        } catch (Exception e) {
-            logger.error("Failed to accept cookies.");
-        }
+        Webfunctions.AcceptCookies(); //Find "Accept cookies" button and click it.
+        Webfunctions.OpenStudentPage(); //Find "Student" button and click it to redirect to LTU login.
 
-        /*
-         * Find "Student" button and click it to redirect to LTU login.
-         */
-        try {
-            SelenideElement studentButton = $(byXpath("/html/body/header/div[2]/div[1]/div[1]/div[3]/div/a[1]"));
-            if (studentButton.exists()) {
-                studentButton.click();
-                logger.info("Opened 'Student' page.");
-            }
-        } catch (Exception e) {
-            logger.error("Failed to open student page.");
-        }
-
-        /*
-         * Find and click on "Logga in" button to go to the login page
-         */
+        //Find and click on "Logga in" button to go to the login page
         try {
             SelenideElement loginButton = $(byXpath("//a[contains(text(),'Logga in')]"));
             if (loginButton.exists()) {
@@ -115,7 +83,8 @@ public class Main {
     /**
      * Downloads the Transcripts from Ladok website.
      */
-    public static void transcriptDownload() {
+
+        public static void transcriptDownload() {
         try {
             // Open "Transcripts" link in a new tab
             SelenideElement transcriptsLink = $x("//a[contains(text(), 'Transcripts') or contains(text(), 'Intyg')]");
