@@ -22,10 +22,10 @@ public class Main {
 
     private static final Logger logger = LoggerFactory.getLogger(Main.class);
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
 
         logger.info("Starting Logger");
-        String targetURL ="https://ltu.se";
+        String targetURL = "https://ltu.se";
         /*
          * Getting username and password
          */
@@ -40,12 +40,12 @@ public class Main {
             BrowserConfig.setConfig();
             open(targetURL);
 
-            if(Objects.equals(title(), "Luleå tekniska universitet, LTU")) {
+            if (Objects.equals(title(), "Luleå tekniska universitet, LTU")) {
                 logger.info("Successfully opened webpage.");
             } else {
                 logger.error("Failed to open the webpage.");
             }
-            // Open a website
+
         } catch (Exception e) {
             logger.error("Failed to open website");
         }
@@ -118,11 +118,13 @@ public class Main {
      */
     public static void transcriptDownload() {
         try {
-            if ($(byXpath("//a[contains(text(),'Intyg')]")).exists()) {
-                $(byXpath("//a[contains(text(),'Intyg')]")).click();
-                logger.info("Successfully opened Ladok website on a new tab");
+            // Open "Transcripts" link in a new tab
+            SelenideElement transcriptsLink = $x("//a[contains(text(), 'Transcripts') or contains(text(), 'Intyg')]");
+            if (transcriptsLink.exists()) {
+                transcriptsLink.click();
                 // Switches Selenide to the Ladok website, checking if the title of the website exists
                 switchTo().window("Studentwebb");
+                logger.info("Successfully opened Ladok website in a new tab");
             } else {
                 logger.error("Cannot open Ladok website.");
             }
@@ -144,13 +146,15 @@ public class Main {
         }
 
         try {
+            // Enter the name of the university in the search bar and select the LTU Ladok registry
             SelenideElement searchBar = $x("//*[@id='searchinput']");
             if (searchBar.exists()) {
                 searchBar.setValue("Luleå");
                 // Wait 5 seconds for results to appear
                 sleep(5000);
-                if ($(byXpath("//a[contains(@class, 'institution')]")).exists()) {
-                    $(byXpath("//a[contains(@class, 'institution')]")).click();
+                SelenideElement institutionLink = $(byXpath("//a[contains(@class, 'institution')]"));
+                if (institutionLink.exists()) {
+                    institutionLink.click();
                     logger.info("Successfully opened LTU Ladok registry");
                 } else {
                     logger.error("Cannot locate Luleå on search list.");
@@ -164,11 +168,10 @@ public class Main {
 
         sleep(15000);
 
-        SelenideElement mobileMenuButton = $x("//button[@role='button']");
 
         int windowWidth = WebDriverRunner.getWebDriver().manage().window().getSize().getWidth();
 
-        System.out.println("Window width is "+windowWidth);
+        System.out.println("Window width is " + windowWidth);
 
         // Locate the link element
         SelenideElement transcriptsLink = $x("//a[contains(text(), 'Transcripts') or contains(text(), 'Intyg')]");
@@ -176,6 +179,7 @@ public class Main {
         try {
             if (windowWidth < 1600) {
                 logger.info("Mobile menu button is showing.");
+                SelenideElement mobileMenuButton = $x("//button[@role='button']");
                 mobileMenuButton.click();
             } else {
                 logger.info("Mobile menu not showing");
@@ -188,7 +192,7 @@ public class Main {
                 logger.error("Cannot open Transcripts");
             }
         } catch (Exception e) {
-            logger.error("Cannot locate ladok webpage.");
+            logger.error("Cannot locate Ladok webpage.");
         }
 
         // We sleep for webpage to fully load, as it loads in browser,
@@ -196,9 +200,13 @@ public class Main {
         sleep(5000);
 
         // Check for button, both in english and swedish.
-        SelenideElement transcriptsButton = $x("//button[contains(text(), 'Create') or contains(text(), 'Skapa Intyg')]");
         try {
-            if (transcriptsButton.exists()) {
+            ElementsCollection firstCreateButtons = $$("button").filter(Condition.text("Skapa intyg"));
+            if (firstCreateButtons.size() == 0) {
+                firstCreateButtons = $$("button").filter(Condition.text("Create"));
+            }
+            if (firstCreateButtons.size() > 0) {
+                SelenideElement transcriptsButton = firstCreateButtons.first();
                 transcriptsButton.click();
                 logger.info("Successfully created transcript.");
             } else {
@@ -207,28 +215,28 @@ public class Main {
         } catch (Exception e) {
             logger.error("Error creating the transcripts.");
         }
-
         /*
          * Opens dropdown and selects the correct option, then downloads the document.
          */
-        // Locate the dropdown element
-        SelenideElement dropdown = $x("//*[@id='intygstyp']");
-        SelenideElement createTranscriptsButton = $x("/html/body/ladok-root/div/main/div/ladok-skapa-intyg/ladok-card/div/div/ladok-card-body/div[3]/div/form/div[3]/div/ladok-skapa-intyg-knapprad/div/button[1]/span");
+
+
         // Open the dropdown
-        dropdown.click();
-
         try {
-            if(dropdown.exists()) {
-                // Select the option with the value "1: Object", which is registration.
-                SelenideElement option = $("option[value='1: Object']");
-                option.click();
-                logger.info("Clicked on option in dropdown menu");
-            } else {
-                logger.error("Cannot find dropdown menu");
-            }
+            SelenideElement option = $x("//*[@id=\"intygstyp\"]/option[2]");
+            option.click();
+            logger.info("Clicked on option in dropdown menu");
+        } catch (Exception e) {
+            logger.error("Cannot find dropdown menu");
+        }
 
-            // Download the transcripts if button is there.
-            if (createTranscriptsButton.exists()) {
+        // Download the transcripts if button is there.
+        try {
+            ElementsCollection secondCreateButtons = $$("button").filter(Condition.text("Skapa"));
+            if (secondCreateButtons.size() == 0) {
+                secondCreateButtons = $$("button").filter(Condition.text("Create"));
+            }
+            if (secondCreateButtons.size() > 0) {
+                SelenideElement createTranscriptsButton = secondCreateButtons.first();
                 createTranscriptsButton.click();
                 logger.info("Downloaded certificate of registration successfully.");
             } else {
@@ -241,48 +249,54 @@ public class Main {
         // Locate all PDF links with wildcard
         ElementsCollection pdfLinks = $$x("//a[contains(@href, '/intyg/') and contains(@href, '/pdf')]");
 
-        // Get window title
-        String windowTitle = Selenide.title();
+        if (pdfLinks.size() == 0) {
+            try {
+                long startTime = System.currentTimeMillis();
+                while (System.currentTimeMillis() - startTime < 20000) {
+                    pdfLinks = $$x("//a[contains(@href, '/intyg/') and contains(@href, '/pdf')]");
 
-        // Finds and downloads the first link, which should be latest created transcript.
-        try {
-            while (true) {
-                if (windowTitle.contains("Intyg") || windowTitle.contains("Transcripts")) {
-                    break;
+                    if (pdfLinks.size() > 0) {
+                        break;
+                    }
+
+                    sleep(2000);
+                    logger.info("Website not updated, waiting 2 seconds.");
                 }
-                Selenide.sleep(2000);
-                logger.info("Window title is: " + windowTitle);
-                logger.info("Website not updated, waiting 2 seconds.");
+            } catch (Exception e) {
+                logger.error("Took too long time");
             }
-            logger.info("Correct window for downloading pdf.");
-            if (pdfLinks.size() > 0) {
-                logger.info("Located " + pdfLinks.size() + " links");
-                SelenideElement firstPdfLink = pdfLinks.first();
-                String link = firstPdfLink.getAttribute("href");
+            // Finds and downloads the first link, which should be latest created transcript.
 
-                // Download the file
-                assert link != null;
-                File downloadedFile = download(link);
-                logger.info("Downloading transcripts. File URL:" + downloadedFile);
-            } else {
-                logger.error("No PDF links found to download transcripts.");
+            try {
+                logger.info("Correct window for downloading pdf.");
+                if (pdfLinks.size() > 0) {
+                    logger.info("Located " + pdfLinks.size() + " links");
+                    SelenideElement firstPdfLink = pdfLinks.first();
+                    String link = firstPdfLink.getAttribute("href");
+
+                    // Download the file
+                    assert link != null;
+                    File downloadedFile = download(link);
+                    logger.info("Downloading transcripts. File URL: " + downloadedFile);
+                } else {
+                    logger.error("No PDF links found to download transcripts.");
+                }
+            } catch (Exception e) {
+                logger.error("Error occurred while downloading transcripts: {}", e.getMessage());
             }
-        } catch (Exception e) {
-            logger.error("Error occurred while downloading transcripts: {}", e.getMessage());
+
+            sleep(8000);
+            Selenide.closeWindow();
+            // Switch back to the default tab
+            Selenide.switchTo().window(WebDriverRunner.getWebDriver().getWindowHandles().iterator().next());
         }
-
-        sleep(8000);
-        Selenide.closeWindow();
-        // Switch back to the default tab
-        Selenide.switchTo().window(WebDriverRunner.getWebDriver().getWindowHandles().iterator().next());
     }
-
     public static void kronoxSearch() {
         /*
          * Open "Examination" dropdown and click the "Examination Schedule" menu button.
          */
         try {
-            if(Objects.equals(title(), "Update - ltu.se") || Objects.equals(title(), "Aktuellt - ltu.se")) {
+            if (Objects.equals(title(), "Update - ltu.se") || Objects.equals(title(), "Aktuellt - ltu.se")) {
                 logger.info("Correct website is open");
                 if ($(byXpath("//a[contains(text(),'Tentamen')]")).exists()) {
                     $(byXpath("//a[contains(text(),'Tentamen')]")).click();
@@ -331,7 +345,7 @@ public class Main {
         try {
             listItems.first().click();
             logger.info("Opened first link.");
-        } catch ( Exception e) {
+        } catch (Exception e) {
             logger.error("Cannot find first element");
         }
 
@@ -353,7 +367,7 @@ public class Main {
             BufferedImage screenshotImage = ImageIO.read(screenshot);
             ImageIO.write(screenshotImage, "jpg", screenshotJpg);
             FileUtils.copyFile(screenshot, screenshotJpg);
-            logger.info("Image saved at "+screenshotPath);
+            logger.info("Image saved at " + screenshotPath);
         } catch (IOException e) {
             e.printStackTrace();
             logger.error("Image cannot be saved");
