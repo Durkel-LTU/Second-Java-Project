@@ -13,7 +13,6 @@ import java.io.IOException;
 import java.util.Objects;
 import com.codeborne.selenide.Screenshots;
 import com.codeborne.selenide.WebDriverRunner;
-import static com.codeborne.selenide.Condition.text;
 import static com.codeborne.selenide.Selectors.byXpath;
 import static com.codeborne.selenide.Selenide.*;
 
@@ -132,17 +131,15 @@ public class Main {
             logger.error("Cannot locate Ladok website.");
         }
 
-        // Locate the span element using XPath
-        SelenideElement spanElement = $x("/html/body/ladok-root/div/main/div/ladok-inloggning/div/div/div/div/div/div/div/ladok-student/div[1]/a/div/div[2]/span[2]");
+        // Locate the login button
         try {
-            if (spanElement.shouldHave(text("Access through your institution")).exists()) {
-                spanElement.shouldHave(text("Access through your institution")).click();
-                logger.info("Successfully continued in the Ladok website");
-            } else {
-                logger.error("Cannot open Ladok website.");
+        SelenideElement ladokLoginButton =$(byXpath("//a[contains(@class, 'btn-ladok-inloggning')]"));
+            if (ladokLoginButton.exists()) {
+                ladokLoginButton.click();
+                logger.info("Clicked on Ladok login button.");
             }
         } catch (Exception e) {
-            logger.error("Cannot locate Ladok website.");
+            logger.error("Failed to click on Ladok login button.");
         }
 
         try {
