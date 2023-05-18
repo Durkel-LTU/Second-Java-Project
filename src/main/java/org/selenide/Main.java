@@ -7,38 +7,37 @@ import static com.codeborne.selenide.Selenide.*;
 public class Main {
 
     private static final Logger logger = LoggerFactory.getLogger(Main.class);
-
     private static final String TITLE_EXPECTED = "Luleå tekniska universitet, LTU";
 
     public static void main(String[] args) {
         logger.info("Starting Logger");
 
-        GUI gui = new GUI();
-        String[] credentials = gui.getLoginCredentials("https://ltu.se");
-
-        if (credentials == null || credentials.length < 2) {
+        String[] credentials = getCredentials();
+        if (credentials == null) {
             logger.error("Credentials are invalid.");
             return;
         }
 
         try {
-            BrowserConfig.setConfig();
-            open("https://ltu.se");
-
-            if (!Objects.equals(title(), TITLE_EXPECTED)) {
-                throw new Exception("Failed to open the webpage.");
-            }
-
-        } catch (Exception e) {
-            logger.error("Failed to open website due to: ", e);
-            return;
-        }
-
-        try {
+            initializeBrowser();
             performWebActions(credentials);
             logger.info("Web actions completed successfully.");
         } catch (Exception e) {
             logger.error("Error during web actions due to: ", e);
+        }
+    }
+
+    private static String[] getCredentials() {
+        GUI gui = new GUI();
+        return gui.getLoginCredentials("https://ltu.se");
+    }
+
+    private static void initializeBrowser() throws Exception {
+        BrowserConfig.setConfig();
+        open("https://ltu.se");
+
+        if (!Objects.equals(title(), TITLE_EXPECTED)) {
+            throw new Exception("Failed to open the webpage.");
         }
     }
 
