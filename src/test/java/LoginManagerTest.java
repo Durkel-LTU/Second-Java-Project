@@ -1,7 +1,7 @@
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.selenide.LoginManager;
+import org.selenide.CredentialsManager;
 
 import java.io.File;
 
@@ -9,7 +9,7 @@ import java.io.File;
 
 class LoginManagerTest {
     private static final String TEST_LOGIN_FILE_PATH = "test-login.json";
-    private LoginManager loginManager;
+    private CredentialsManager credentialsManager;
 
     @BeforeEach
     void setUp() {
@@ -20,13 +20,13 @@ class LoginManagerTest {
         }
 
         // Skapa LoginManager-instans för varje testfall
-        loginManager = new LoginManager(TEST_LOGIN_FILE_PATH);
+        credentialsManager = new CredentialsManager(TEST_LOGIN_FILE_PATH);
     }
 
     @Test
     void testGetLoginCredentials_NoSavedCredentials() {
         // Anropa getLoginCredentials med en URL som inte har sparade inloggningsuppgifter
-        String[] credentials = loginManager.getLoginCredentials("http://example.com");
+        String[] credentials = credentialsManager.getLoginCredentials("http://example.com");
 
         // Kontrollera att inloggningsuppgifterna är null
         Assertions.assertNull(credentials);
@@ -38,10 +38,10 @@ class LoginManagerTest {
         String testUsername = "testuser";
         String testPassword = "testpassword";
         String testDomain = "svt";
-        loginManager.saveCredentialsToFile(testUsername, testPassword,testDomain);
+        credentialsManager.saveCredentialsToFile(testUsername, testPassword,testDomain);
 
         // Anropa getLoginCredentials med en URL som har sparade inloggningsuppgifter
-        String[] credentials = loginManager.getLoginCredentials("http://example.com");
+        String[] credentials = credentialsManager.getLoginCredentials("http://example.com");
 
         // Kontrollera att inloggningsuppgifterna är korrekta
         Assertions.assertNotNull(credentials);
@@ -53,7 +53,7 @@ class LoginManagerTest {
     void testGetLoginCredentials_InvalidURL() {
         // Anropa getLoginCredentials med en ogiltig URL
         Assertions.assertThrows(RuntimeException.class, () -> {
-            loginManager.getLoginCredentials("invalidurl");
+            credentialsManager.getLoginCredentials("invalidurl");
         });
     }
 }

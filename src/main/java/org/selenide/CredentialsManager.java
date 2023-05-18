@@ -3,8 +3,6 @@ package org.selenide;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-
-
 import javax.swing.JOptionPane;
 import java.io.File;
 import java.io.IOException;
@@ -13,11 +11,11 @@ import java.net.URISyntaxException;
 
 import java.util.logging.Logger;
 
-public class LoginManager {
-    private static final Logger LOGGER = Logger.getLogger(LoginManager.class.getName());
+public class CredentialsManager {
+    private static final Logger LOGGER = Logger.getLogger(CredentialsManager.class.getName());
     private final String loginFilePath;
 
-    public LoginManager(String loginFilePath) {
+    public CredentialsManager(String loginFilePath) {
         this.loginFilePath = loginFilePath;
     }
 

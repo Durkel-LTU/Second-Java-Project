@@ -11,7 +11,7 @@ import java.util.logging.SimpleFormatter;
 public class GUI {
     private static final Logger LOGGER = Logger.getLogger(GUI.class.getName());
     private static final String LOGIN_FILE_PATH = determineLoginFilePath();
-    private final LoginManager loginManager;
+    private final CredentialsManager credentialsManager;
 
     static {
         try {
@@ -22,11 +22,11 @@ public class GUI {
     }
 
     public GUI() {
-        this.loginManager = new LoginManager(LOGIN_FILE_PATH);
+        this.credentialsManager = new CredentialsManager(LOGIN_FILE_PATH);
     }
 
     public String[] getLoginCredentials(String url) {
-        String[] credentials = loginManager.getLoginCredentials(url);
+        String[] credentials = credentialsManager.getLoginCredentials(url);
 
         if (credentials == null) {
             credentials = promptForCredentials();
@@ -45,7 +45,7 @@ public class GUI {
     private void saveCredentialsIfNeeded(String[] credentials, String url) {
         int saveChoice = JOptionPane.showConfirmDialog(null, "Do you want to save login credentials?", "Login credentials", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
         if (saveChoice == JOptionPane.YES_OPTION) {
-            loginManager.saveCredentialsToFile(credentials[0], credentials[1], loginManager.extractDomain(url));
+            credentialsManager.saveCredentialsToFile(credentials[0], credentials[1], credentialsManager.extractDomain(url));
         }
     }
 
