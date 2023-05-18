@@ -47,13 +47,10 @@ public class Main {
         }
 
         //Find and click on "Logga in" button to go to the login page
-        try {
-            SelenideElement loginButton = $(byXpath("//a[contains(text(),'Logga in')]"));
-            if (loginButton.exists()) {
-                loginButton.click();
-                logger.info("Clicked on 'Logga in' button.");
-            }
-        } catch (Exception e) {
+
+        if (LTUWebfunctions.loggaIn()) {
+            logger.info("Clicked on 'Logga in' button.");
+        } else {
             logger.error("Failed to click on 'Logga in' button.");
         }
 

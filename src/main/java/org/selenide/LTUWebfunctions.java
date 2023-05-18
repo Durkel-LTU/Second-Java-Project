@@ -142,5 +142,23 @@ public class LTUWebfunctions {
             throw new RuntimeException(e);
         }
     }
-}
+
+    public static boolean loggaIn() {
+        try {
+            SelenideElement loginButton = $(Selectors.byXpath("//a[contains(text(),'Logga in')]"));
+            if (loginButton.exists()) {
+                loginButton.click();
+                logger.info("Clicked on 'Logga in' button.");
+                return true;
+            } else {
+                logger.info("'Logga in' button not found.");
+                return false;
+            }
+        } catch (Exception e) {
+            logger.info("Failed to click on 'Logga in' button due to exception: {}");
+            return false;
+        }
+    }
+   }
+
 
