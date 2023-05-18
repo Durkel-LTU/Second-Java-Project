@@ -19,7 +19,7 @@ public class LTUWebfunctions {
 
     private static final Logger logger = LoggerFactory.getLogger(LTUWebfunctions.class);
 
-    public static void AcceptCookies() {
+    public static boolean acceptCookies() {
 
         logger.info("Finding and accept all cookies on website");
         try {
@@ -31,9 +31,10 @@ public class LTUWebfunctions {
         } catch (Exception e) {
             logger.info("Failed to accept cookies.");
         }
+        return true;
     }
 
-    public static boolean OpenStudentPage() {
+    public static boolean openStudentPage() {
         try {
             SelenideElement studentButton = $(byXpath("/html/body/header/div[2]/div[1]/div[1]/div[3]/div/a[1]"));
             if (studentButton.exists()) {
@@ -47,7 +48,7 @@ public class LTUWebfunctions {
         return false;
     }
 
-    public static void kronoxSearch() {
+    public static boolean kronoxSearch() {
         /*
          * Open "Examination" dropdown and click the "Examination Schedule" menu button.
          */
@@ -139,6 +140,7 @@ public class LTUWebfunctions {
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
+        return false;
     }
 
     public static boolean loggaIn() {
