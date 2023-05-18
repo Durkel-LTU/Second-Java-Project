@@ -159,6 +159,24 @@ public class LTUWebfunctions {
             return false;
         }
     }
-   }
+
+    public static boolean fillInCredentials(String username, String password) {
+        try {
+            $("#username").setValue(username);
+            $("#password").setValue(password);
+            $("[name='submit']").click();
+            if (Objects.equals(title(), "Aktuellt - ltu.se") || Objects.equals(title(), "Update - ltu.se")) {
+                //Main.logger.info("Successfully logged in");
+                return true;
+            } else {
+                //throw new LoginException("Failed to log in. Invalid credentials or login page not loaded.");
+            }
+        } catch (Exception e) {
+            //Main.logger.error("Failed to log in due to exception: {}", e.getMessage());
+            return false;
+        }
+        return false;
+    }
+}
 
 

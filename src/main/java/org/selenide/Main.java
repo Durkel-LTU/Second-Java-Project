@@ -54,20 +54,12 @@ public class Main {
             logger.error("Failed to click on 'Logga in' button.");
         }
 
-        /*
-         * Fill in the login form with credentials
-         */
-        try {
-            $("#username").setValue(credentials[0]);
-            $("#password").setValue(credentials[1]);
-            $("[name='submit']").click();
-            if (Objects.equals(title(), "Aktuellt - ltu.se") || Objects.equals(title(), "Update - ltu.se")) {
-                logger.info("Successfully logged in");
-            } else {
-                throw new LoginException("Failed to log in. Invalid credentials or login page not loaded.");
-            }
-        } catch (Exception e) {
-            logger.error("Failed to log in due to exception: {}", e.getMessage());
+        //Fill in the login form with credentials
+        boolean loginSuccessful = LTUWebfunctions.fillInCredentials(credentials[0], credentials[1]);
+        if (loginSuccessful) {
+            logger.info("Successfully logged in");
+        } else {
+            logger.error("Failed to log in");
         }
 
         transcriptDownload(); // Open transcripts download on new tab, download then close it.
