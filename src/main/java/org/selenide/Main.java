@@ -8,8 +8,10 @@ public class Main {
 
     private static final Logger logger = LoggerFactory.getLogger(Main.class);
     private static final String TITLE_EXPECTED = "Luleå tekniska universitet, LTU";
+    private static final String SITE_URL = "https://ltu.se";
 
     public static void main(String[] args) {
+
         logger.info("Starting Logger");
 
         String[] credentials = getCredentials();
@@ -29,12 +31,12 @@ public class Main {
 
     private static String[] getCredentials() {
         GUI gui = new GUI();
-        return gui.getLoginCredentials("https://ltu.se");
+        return gui.getLoginCredentials(SITE_URL);
     }
 
     private static void initializeBrowser() throws Exception {
         BrowserConfig.setConfig();
-        open("https://ltu.se");
+        open(SITE_URL);
 
         if (!Objects.equals(title(), TITLE_EXPECTED)) {
             throw new Exception("Failed to open the webpage.");
