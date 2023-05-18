@@ -34,16 +34,18 @@ public class LTUWebfunctions {
         }
     }
 
-    public static void OpenStudentPage() {
+    public static boolean OpenStudentPage() {
         try {
             SelenideElement studentButton = $(byXpath("/html/body/header/div[2]/div[1]/div[1]/div[3]/div/a[1]"));
             if (studentButton.exists()) {
                 studentButton.click();
                 logger.info("Opened 'Student' page.");
+                return true;
             }
         } catch (Exception e) {
             logger.info("Failed to open student page.");
         }
+        return false;
     }
 
     public static void kronoxSearch() {

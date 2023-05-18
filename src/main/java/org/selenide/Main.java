@@ -39,7 +39,12 @@ public class Main {
         }
 
         LTUWebfunctions.AcceptCookies(); //Find "Accept cookies" button and click it.
-        LTUWebfunctions.OpenStudentPage(); //Find "Student" button and click it to redirect to LTU login.
+        boolean result = LTUWebfunctions.OpenStudentPage();
+        if (result) {
+            logger.info("Student page opened successfully.");
+        } else {
+            logger.error("Failed to open student page.");
+        }
 
         //Find and click on "Logga in" button to go to the login page
         try {
