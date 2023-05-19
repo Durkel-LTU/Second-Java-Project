@@ -12,6 +12,9 @@ public class Main {
 
     public static void main(String[] args) {
 
+
+        System.setProperty("logback.configurationFile", "jetbrains://idea/navigate/reference?project=Second-Java-Project&path=logback.xml");
+
         logger.info("Starting Logger");
 
         String[] credentials = getCredentials();
@@ -25,7 +28,7 @@ public class Main {
             performWebActions(credentials);
             logger.info("Web actions completed successfully.");
         } catch (Exception e) {
-            logger.error("Error during web actions due to: ", e);
+            logger.error("Error during web actions:", e);
         }
     }
 

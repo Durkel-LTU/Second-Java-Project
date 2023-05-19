@@ -4,6 +4,7 @@ import com.codeborne.selenide.*;
 import org.apache.commons.io.FileUtils;
 
 import javax.imageio.ImageIO;
+import javax.security.auth.login.LoginException;
 
 import static com.codeborne.selenide.Selectors.byXpath;
 import static com.codeborne.selenide.Selenide.*;
@@ -21,7 +22,7 @@ public class LTUWebfunctions {
 
     public static boolean acceptCookies() {
 
-        logger.info("Finding and accept all cookies on website");
+        logger.info("Finding and accepting all cookies on website");
         try {
             SelenideElement cookiesButton = $(byXpath("//button[@id='CybotCookiebotDialogBodyLevelButtonLevelOptinAllowAll']"));
             if (cookiesButton.exists()) {
@@ -70,17 +71,19 @@ public class LTUWebfunctions {
                 logger.info("Failed to open the correct website.");
             }
         } catch (Exception e) {
-            logger.info("Failed to log in due to exception: {}");
+            logger.info("Failed to log in due to exception: {}", e.getMessage());
         }
 
         // Switches Selenide to the Ladok website, checking if the title of the website exists
         switchTo().window("KronoX Web");
         try {
-            if ($(byXpath("//*[@id='enkel_sokfalt']")).exists()) {
-                $(byXpath("//*[@id='enkel_sokfalt']")).setValue("i0015n");
+            SelenideElement searchField = $(byXpath("//*[@id='enkel_sokfalt']"));
+            if (searchField.exists()) {
+                searchField.setValue("i0015n");
                 logger.info("Successfully opened the 'Examination' dropdown");
-                if ($(byXpath("//*[@id='enkel_sokknapp']")).exists()) {
-                    $(byXpath("//*[@id='enkel_sokknapp']")).click();
+                SelenideElement searchButton = $(byXpath("//*[@id='enkel_sokknapp']"));
+                if (searchButton.exists()) {
+                    searchButton.click();
                     logger.info("Searching for i0015n exams");
 
                 }
@@ -137,10 +140,11 @@ public class LTUWebfunctions {
         Selenide.switchTo().window(WebDriverRunner.getWebDriver().getWindowHandles().iterator().next());
         try {
             Thread.sleep(5000);
+            return true;
         } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+             return false;
         }
-        return false;
+
     }
 
     public static boolean loggaIn() {
@@ -155,7 +159,7 @@ public class LTUWebfunctions {
                 return false;
             }
         } catch (Exception e) {
-            logger.info("Failed to click on 'Logga in' button due to exception: {}");
+            logger.info("Failed to click on 'Logga in' button due to exception:  {}", e.getMessage());
             return false;
         }
     }
@@ -166,16 +170,16 @@ public class LTUWebfunctions {
             $("#password").setValue(password);
             $("[name='submit']").click();
             if (Objects.equals(title(), "Aktuellt - ltu.se") || Objects.equals(title(), "Update - ltu.se")) {
-                //Main.logger.info("Successfully logged in");
+                logger.info("Successfully logged in");
                 return true;
             } else {
-                //throw new LoginException("Failed to log in. Invalid credentials or login page not loaded.");
+               throw new LoginException("Failed to log in. Invalid credentials or login page not loaded.");
             }
         } catch (Exception e) {
-            //Main.logger.error("Failed to log in due to exception: {}", e.getMessage());
+            logger.error("Failed to log in due to exception: {}", e.getMessage());
             return false;
         }
-        return false;
+
     }
 
     public static boolean transcriptDownload() {
