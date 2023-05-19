@@ -6,6 +6,7 @@ import org.apache.commons.io.FileUtils;
 import javax.imageio.ImageIO;
 import javax.security.auth.login.LoginException;
 
+import static com.codeborne.selenide.Selectors.byAttribute;
 import static com.codeborne.selenide.Selectors.byXpath;
 import static com.codeborne.selenide.Selenide.*;
 
@@ -13,6 +14,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.Objects;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -142,7 +144,7 @@ public class LTUWebfunctions {
             Thread.sleep(5000);
             return true;
         } catch (InterruptedException e) {
-             return false;
+            return false;
         }
 
     }
@@ -173,7 +175,7 @@ public class LTUWebfunctions {
                 logger.info("Successfully logged in");
                 return true;
             } else {
-               throw new LoginException("Failed to log in. Invalid credentials or login page not loaded.");
+                throw new LoginException("Failed to log in. Invalid credentials or login page not loaded.");
             }
         } catch (Exception e) {
             logger.error("Failed to log in due to exception: {}", e.getMessage());
@@ -356,6 +358,48 @@ public class LTUWebfunctions {
         }
         return true;
     }
+
+    public static boolean SyllabusDownload() {
+        open("https://ltu.instructure.com/courses");
+        sleep(5000);
+        try {
+            // Hitta länken baserat på titelattributet
+            $(byAttribute("title", "Test av IT-system, Lp4, V23")).click();
+            logger.info("Opened first link.");
+
+            // Hitta länken till kursplanen
+            $(byAttribute("title", "kursplanen")).click();
+            logger.info("Opened syllabus link.");
+            sleep(5000);
+            // Hitta PDF-länkarna
+            ElementsCollection pdfLinks = $$("a[href*='/kursplan/'][href*='/pdf']");
+
+            if (pdfLinks.size() > 0) {
+                logger.info("Located " + pdfLinks.size() + " links");
+
+                SelenideElement firstPdfLink = pdfLinks.first();
+                String link = firstPdfLink.getAttribute("href");
+
+
+                assert link != null;
+                File downloadedFile = download(link);
+                logger.info("Downloading syllabus File URL: " + downloadedFile);
+            } else {
+                logger.error("No PDF links found to download syllabus.");
+            }
+
+            return true;
+        } catch (Exception e) {
+            logger.error("Error occurred while downloading syllabus: {}", e.getMessage());
+            return false;
+        }
+    }
+
+
 }
+
+
+
+
 
 
