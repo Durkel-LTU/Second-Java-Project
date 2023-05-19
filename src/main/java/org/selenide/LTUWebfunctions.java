@@ -6,8 +6,7 @@ import org.apache.commons.io.FileUtils;
 import javax.imageio.ImageIO;
 import javax.security.auth.login.LoginException;
 
-import static com.codeborne.selenide.Selectors.byAttribute;
-import static com.codeborne.selenide.Selectors.byXpath;
+import static com.codeborne.selenide.Selectors.*;
 import static com.codeborne.selenide.Selenide.*;
 
 import java.awt.image.BufferedImage;
@@ -361,40 +360,51 @@ public class LTUWebfunctions {
 
     public static boolean SyllabusDownload() {
         open("https://ltu.instructure.com/courses");
-        sleep(5000);
+        sleep(2000);
+        SelenideElement courseLink = $(byXpath("//a[@title='I0015N, Test av IT-system, Lp4, V23']"));
         try {
-            // Hitta länken baserat på titelattributet
-            $(byAttribute("title", "Test av IT-system, Lp4, V23")).click();
-            logger.info("Opened first link.");
-
-            // Hitta länken till kursplanen
-            $(byAttribute("title", "kursplanen")).click();
-            logger.info("Opened syllabus link.");
-            sleep(5000);
-            // Hitta PDF-länkarna
+            if (courseLink.exists()) {
+                courseLink.click();
+                logger.info("Successfully opened course page");
+            } else {
+                logger.error("Cannot open course page");
+            }
+        } catch (Exception e) {
+            logger.error("Cannot open course webpage.");
+            return false;
+        }
+        sleep(2000);
+        SelenideElement syllabusLink = $(byXpath("/html/body/div[3]/div[2]/div[2]/div[3]/div[1]/div/div[1]/div/div[3]/table/tbody/tr[6]/td/p/span[1]/strong/a")) ;
+        try {
+            if (syllabusLink.exists()) {
+                syllabusLink.click();
+                logger.info("Successfully opened syllabus page");
+            } else {
+                logger.error("Cannot open syllabus page");
+            }
+        } catch (Exception e) {
+            logger.error("Cannot open syllabus webpage.");
+            return false;
+        }
+        sleep(2000);
+        try {
             ElementsCollection pdfLinks = $$("a[href*='/kursplan/'][href*='/pdf']");
-
             if (pdfLinks.size() > 0) {
                 logger.info("Located " + pdfLinks.size() + " links");
-
                 SelenideElement firstPdfLink = pdfLinks.first();
                 String link = firstPdfLink.getAttribute("href");
-
-
                 assert link != null;
                 File downloadedFile = download(link);
                 logger.info("Downloading syllabus File URL: " + downloadedFile);
             } else {
                 logger.error("No PDF links found to download syllabus.");
             }
-
             return true;
         } catch (Exception e) {
             logger.error("Error occurred while downloading syllabus: {}", e.getMessage());
             return false;
         }
     }
-
 
 }
 
