@@ -3,6 +3,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.util.Objects;
 import static com.codeborne.selenide.Selenide.*;
+import java.io.File;
 
 public class Main {
 
@@ -11,10 +12,11 @@ public class Main {
     private static final String SITE_URL = "https://ltu.se";
 
     public static void main(String[] args) {
-
-
+        File logDirectory = new File("logs/");
+        if (!logDirectory.exists()) {
+            logDirectory.mkdirs();
+        }
         System.setProperty("logback.configurationFile", "jetbrains://idea/navigate/reference?project=Second-Java-Project&path=logback.xml");
-
         logger.info("Starting Logger");
 
         String[] credentials = getCredentials();
@@ -69,6 +71,10 @@ public class Main {
 
         if (!LTUWebfunctions.kronoxSearch()) {
             throw new Exception("Failed to perform Kronox search.");
+        }
+
+        if (!LTUWebfunctions.syllabusDownload()) {
+            throw new Exception("Failed to download syllabus.");
         }
     }
 }

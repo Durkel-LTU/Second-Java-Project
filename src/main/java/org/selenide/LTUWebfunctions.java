@@ -12,11 +12,17 @@ import static com.codeborne.selenide.Selenide.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Objects;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import com.codeborne.selenide.Selenide;
+import com.codeborne.selenide.SelenideElement;
+import com.codeborne.selenide.WebDriverRunner;
 
+import java.util.Set;
 public class LTUWebfunctions {
 
     private static final Logger logger = LoggerFactory.getLogger(LTUWebfunctions.class);
@@ -112,6 +118,7 @@ public class LTUWebfunctions {
         //SelenideElement targetWindow = (SelenideElement) Selenide.switchTo().window("Schema");
 
         switchTo().window("Schema");
+
         // Take a screenshot of the whole page
         File screenshot = Screenshots.takeScreenShotAsFile();
 
@@ -134,19 +141,22 @@ public class LTUWebfunctions {
         }
 
         sleep(5000);
-        Selenide.closeWindow();
+        Selenide.closeWindow(); // Close the "Schema" window
+        Selenide.switchTo().window("KronoX Web");
 
+        Selenide.closeWindow(); // Close the "KronoX Web" window
 
-        // Switch back to the default tab
-        Selenide.switchTo().window(WebDriverRunner.getWebDriver().getWindowHandles().iterator().next());
+       Set<String> remainingWindows = WebDriverRunner.getWebDriver().getWindowHandles();
+       switchTo().window(remainingWindows.iterator().next()); // Switch back to the original tab
+
         try {
             Thread.sleep(5000);
             return true;
         } catch (InterruptedException e) {
             return false;
         }
-
     }
+
 
     public static boolean loggaIn() {
         try {
@@ -358,7 +368,7 @@ public class LTUWebfunctions {
         return true;
     }
 
-    public static boolean SyllabusDownload() {
+    public static boolean syllabusDownload() {
         open("https://ltu.instructure.com/courses");
         sleep(2000);
         SelenideElement courseLink = $(byXpath("//a[@title='I0015N, Test av IT-system, Lp4, V23']"));
@@ -374,7 +384,7 @@ public class LTUWebfunctions {
             return false;
         }
         sleep(2000);
-        SelenideElement syllabusLink = $(byXpath("/html/body/div[3]/div[2]/div[2]/div[3]/div[1]/div/div[1]/div/div[3]/table/tbody/tr[6]/td/p/span[1]/strong/a")) ;
+        SelenideElement syllabusLink = $(byXpath("/html/body/div[3]/div[2]/div[2]/div[3]/div[1]/div/div[1]/div/div[3]/table/tbody/tr[6]/td/p/span[1]/strong/a"));
         try {
             if (syllabusLink.exists()) {
                 syllabusLink.click();
@@ -386,22 +396,41 @@ public class LTUWebfunctions {
             logger.error("Cannot open syllabus webpage.");
             return false;
         }
-        sleep(2000);
-        try {
-            ElementsCollection pdfLinks = $$("a[href*='/kursplan/'][href*='/pdf']");
-            if (pdfLinks.size() > 0) {
-                logger.info("Located " + pdfLinks.size() + " links");
-                SelenideElement firstPdfLink = pdfLinks.first();
-                String link = firstPdfLink.getAttribute("href");
-                assert link != null;
-                File downloadedFile = download(link);
-                logger.info("Downloading syllabus File URL: " + downloadedFile);
-            } else {
-                logger.error("No PDF links found to download syllabus.");
+
+        String originalWindowHandle = WebDriverRunner.getWebDriver().getWindowHandle();
+        String targetWindowHandle = null;
+
+        for (String windowHandle : WebDriverRunner.getWebDriver().getWindowHandles()) {
+            if (!windowHandle.equals(originalWindowHandle)) {
+                targetWindowHandle = windowHandle;
+                break;
             }
-            return true;
-        } catch (Exception e) {
-            logger.error("Error occurred while downloading syllabus: {}", e.getMessage());
+        }
+
+        if (targetWindowHandle != null) {
+            WebDriverRunner.getWebDriver().switchTo().window(targetWindowHandle);
+
+            try {
+                File pdf = $(".utbplan-pdf-link[href]").download();
+
+                File targetDirectory = new File("target/downloads");
+                if (!targetDirectory.exists()) {
+                    targetDirectory.mkdirs();
+                }
+
+                Files.copy(pdf.toPath(), Paths.get(targetDirectory.getAbsolutePath(), pdf.getName()));
+                logger.info("Downloading syllabus File");
+                return true;
+
+            } catch (Exception e) {
+                logger.error("Error occurred while downloading syllabus: {}", e.getMessage());
+                return false;
+            } finally {
+                WebDriverRunner.getWebDriver().close();
+                WebDriverRunner.getWebDriver().switchTo().window(originalWindowHandle);
+            }
+        } else {
+            logger.error("No target window found.");
             return false;
         }
     }
