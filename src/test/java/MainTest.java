@@ -1,4 +1,3 @@
-package org.selenide;
 
 import org.junit.jupiter.api.Test;
 
