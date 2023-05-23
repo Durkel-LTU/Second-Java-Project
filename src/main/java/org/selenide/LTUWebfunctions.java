@@ -380,26 +380,78 @@ public class LTUWebfunctions {
         }
         return true;
     }
-
     public static boolean syllabusDownload() {
         try {
-        open("https://ltu.instructure.com/courses");
-        sleep(2000);
-        SelenideElement courseLink = $(byXpath("//a[@title='I0015N, Test av IT-system, Lp4, V23']"));
+            sleep(2000);
+            SelenideElement dropdownMenu = $(byXpath("//a[contains(text(),'Kurs och program')]"));
+            dropdownMenu.hover();
+
+            if (dropdownMenu .exists()) {
+
+                logger.info("Successfully interacted with the dropdown menu");
+            } else {
+                logger.error("Dropdown menu not found or not visible");
+            }
+        } catch (Exception e) {
+            logger.error("Failed to open the dropdown menu.");
+            return false;
+        }
+/*
+        try {
+            sleep(2000);
+            SelenideElement courseLink = $(byXpath("//a[text()='Kurskatalog - programstudenter »']"));
 
             if (courseLink.exists()) {
                 courseLink.click();
-                logger.info("Successfully opened course page");
+                logger.info("Successfully clicked on 'Kurskatalog - programstudenter »'");
             } else {
-                logger.error("Cannot open course page");
+                logger.error("Failed to find and click on 'Kurskatalog - programstudenter »'");
             }
         } catch (Exception e) {
-            logger.error("Cannot open course webpage.");
+            logger.error("Failed to open course webpage.");
             return false;
         }
+*/
+        open("https://www.ltu.se/student/Planera/Min-utbildning/Mina-kurser");
+        try {
+            sleep(2000);
+            SelenideElement searchInput = $(byXpath("//input[@id='fritext']"));
+            searchInput.setValue("Test av IT");
+
+            logger.info("Successfully filled in the search term 'Test av IT'");
+        } catch (Exception e) {
+            logger.error("Failed to fill in the search term 'Test av IT'");
+            return false;
+        }
+        try {
+            SelenideElement searchButton = $(byXpath("//input[@id='btnSearch']"));
+            if (searchButton.exists()) {
+                searchButton.click();
+                logger.info("Successfully clicked ocn search button.");
+            }
+        } catch (Exception e) {
+            logger.info("Failed to click on search button");
+            return false;
+        }
+        try {
+            sleep(2000);
+            SelenideElement searchResult = $(byXpath("//a[contains(text(), 'Test av IT-system')]"));
+
+            if (searchResult.exists()) {
+                searchResult.click();
+                logger.info("Successfully clicked on the search result 'Test av IT-system'");
+            } else {
+                logger.error("Failed to find and click on the search result 'Test av IT-system'");
+            }
+        } catch (Exception e) {
+            logger.error("Failed to open the search result");
+            return false;
+        }
+
+
         sleep(2000);
         try {
-        SelenideElement syllabusLink = $(byXpath("/html/body/div[3]/div[2]/div[2]/div[3]/div[1]/div/div[1]/div/div[3]/table/tbody/tr[6]/td/p/span[1]/strong/a"));
+            SelenideElement syllabusLink = $(byXpath("//div[@class='more-edu-info']//a[contains(text(), 'Kursplan')]"));
 
             if (syllabusLink.exists()) {
                 syllabusLink.click();
@@ -412,19 +464,6 @@ public class LTUWebfunctions {
             return false;
         }
 
-        String originalWindowHandle = WebDriverRunner.getWebDriver().getWindowHandle();
-        String targetWindowHandle = null;
-
-        for (String windowHandle : WebDriverRunner.getWebDriver().getWindowHandles()) {
-            if (!windowHandle.equals(originalWindowHandle)) {
-                targetWindowHandle = windowHandle;
-                break;
-            }
-        }
-
-        if (targetWindowHandle != null) {
-            WebDriverRunner.getWebDriver().switchTo().window(targetWindowHandle);
-
             try {
                 File pdf = $(".utbplan-pdf-link[href]").download();
 
@@ -435,18 +474,14 @@ public class LTUWebfunctions {
 
                 Files.copy(pdf.toPath(), Paths.get(targetDirectory.getAbsolutePath(), pdf.getName()));
                 logger.info("Downloading syllabus File");
-                WebDriverRunner.getWebDriver().close();
-                WebDriverRunner.getWebDriver().switchTo().window(originalWindowHandle);
+
                 return true;
 
             } catch (Exception e) {
                 logger.error("Error occurred while downloading syllabus: {}", e.getMessage());
                 return false;
             }
-        } else {
-            logger.error("No target window found.");
-            return false;
-        }
+
     }
 
 }
