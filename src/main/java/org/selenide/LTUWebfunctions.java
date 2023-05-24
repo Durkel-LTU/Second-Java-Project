@@ -6,6 +6,7 @@ import org.apache.commons.io.FileUtils;
 import javax.imageio.ImageIO;
 import javax.security.auth.login.LoginException;
 
+import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selectors.*;
 import static com.codeborne.selenide.Selenide.*;
 
@@ -380,26 +381,24 @@ public class LTUWebfunctions {
         }
         return true;
     }
-    public static boolean syllabusDownload() {
+    static boolean syllabusDownload() {
         try {
             sleep(2000);
-            SelenideElement dropdownMenu = $(byXpath("//a[contains(text(),'Kurs och program')]"));
-            dropdownMenu.hover();
-
-            if (dropdownMenu .exists()) {
-
-                logger.info("Successfully interacted with the dropdown menu");
+            SelenideElement utbildningMenu = $$(byXpath("//a[@class='toggleTopMenu']")).get(1);
+            if (utbildningMenu.exists()) {
+                utbildningMenu.click();
             } else {
-                logger.error("Dropdown menu not found or not visible");
+                logger.error("Failed to find and click on 'Utbildning'");
             }
         } catch (Exception e) {
-            logger.error("Failed to open the dropdown menu.");
+            logger.error("Failed to click on 'Utbildning'" );
             return false;
         }
-/*
+
+
         try {
             sleep(2000);
-            SelenideElement courseLink = $(byXpath("//a[text()='Kurskatalog - programstudenter »']"));
+            SelenideElement courseLink = $(".ltu-search-btn");
 
             if (courseLink.exists()) {
                 courseLink.click();
@@ -411,32 +410,31 @@ public class LTUWebfunctions {
             logger.error("Failed to open course webpage.");
             return false;
         }
-*/
-        open("https://www.ltu.se/student/Planera/Min-utbildning/Mina-kurser");
+
         try {
             sleep(2000);
-            SelenideElement searchInput = $(byXpath("//input[@id='fritext']"));
+            SelenideElement searchInput = $(byXpath("//input[@id='cludo-search-bar-input']"));
             searchInput.setValue("Test av IT");
-
             logger.info("Successfully filled in the search term 'Test av IT'");
         } catch (Exception e) {
             logger.error("Failed to fill in the search term 'Test av IT'");
             return false;
         }
+
         try {
-            SelenideElement searchButton = $(byXpath("//input[@id='btnSearch']"));
+            SelenideElement searchButton = $(byXpath("//button[contains(@class, 'button is-medium is-info') and normalize-space()='Sök']"));
             if (searchButton.exists()) {
                 searchButton.click();
-                logger.info("Successfully clicked ocn search button.");
+                logger.info("Successfully clicked on the search button.");
             }
         } catch (Exception e) {
-            logger.info("Failed to click on search button");
+            logger.error("Failed to click on the search button");
             return false;
         }
+
         try {
             sleep(2000);
-            SelenideElement searchResult = $(byXpath("//a[contains(text(), 'Test av IT-system')]"));
-
+            SelenideElement searchResult = $(byXpath("//a[contains(text(), 'Kursplan')]"));
             if (searchResult.exists()) {
                 searchResult.click();
                 logger.info("Successfully clicked on the search result 'Test av IT-system'");
@@ -448,41 +446,38 @@ public class LTUWebfunctions {
             return false;
         }
 
-
         sleep(2000);
         try {
-            SelenideElement syllabusLink = $(byXpath("//div[@class='more-edu-info']//a[contains(text(), 'Kursplan')]"));
-
+            SelenideElement syllabusLink = $(byXpath("//a[@class='utbplan-pdf-link']"));
             if (syllabusLink.exists()) {
                 syllabusLink.click();
-                logger.info("Successfully opened syllabus page");
+                logger.info("Successfully opened the syllabus page");
             } else {
-                logger.error("Cannot open syllabus page");
+                logger.error("Failed to open the syllabus page");
             }
         } catch (Exception e) {
-            logger.error("Cannot open syllabus webpage.");
+            logger.error("Failed to open the syllabus webpage.");
             return false;
         }
 
-            try {
-                File pdf = $(".utbplan-pdf-link[href]").download();
+        try {
+            File pdf = $(".utbplan-pdf-link[href]").download();
 
-                File targetDirectory = new File("target/downloads");
-                if (!targetDirectory.exists()) {
-                    targetDirectory.mkdirs();
-                }
-
-                Files.copy(pdf.toPath(), Paths.get(targetDirectory.getAbsolutePath(), pdf.getName()));
-                logger.info("Downloading syllabus File");
-
-                return true;
-
-            } catch (Exception e) {
-                logger.error("Error occurred while downloading syllabus: {}", e.getMessage());
-                return false;
+            File targetDirectory = new File("target/downloads");
+            if (!targetDirectory.exists()) {
+                targetDirectory.mkdirs();
             }
 
+            Files.copy(pdf.toPath(), Paths.get(targetDirectory.getAbsolutePath(), pdf.getName()));
+            logger.info("Downloading syllabus file");
+
+            return true;
+        } catch (Exception e) {
+            logger.error("Error occurred while downloading the syllabus: {}", e.getMessage());
+            return false;
+        }
     }
+
 
 }
 
