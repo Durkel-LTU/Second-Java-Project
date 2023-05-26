@@ -6,7 +6,6 @@ import org.apache.commons.io.FileUtils;
 import javax.imageio.ImageIO;
 import javax.security.auth.login.LoginException;
 
-import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selectors.*;
 import static com.codeborne.selenide.Selenide.*;
 
@@ -17,6 +16,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Objects;
 
+import org.openqa.selenium.By;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.codeborne.selenide.Selenide;
@@ -24,6 +24,7 @@ import com.codeborne.selenide.SelenideElement;
 import com.codeborne.selenide.WebDriverRunner;
 
 import java.util.Set;
+
 public class LTUWebfunctions {
 
     private static final Logger logger = LoggerFactory.getLogger(LTUWebfunctions.class);
@@ -38,7 +39,7 @@ public class LTUWebfunctions {
                 logger.info("Successfully accepted cookies on website.");
             }
         } catch (Exception e) {
-            logger.info("Failed to accept cookies.");
+            logger.error("ERROR: Failed to accept cookies.");
             return false;
         }
         return true;
@@ -86,8 +87,8 @@ public class LTUWebfunctions {
 
         // Switches Selenide to the Ladok website, checking if the title of the website exists
         try {
-        switchTo().window("KronoX Web");
-        SelenideElement searchField = $(byXpath("//*[@id='enkel_sokfalt']"));
+            switchTo().window("KronoX Web");
+            SelenideElement searchField = $(byXpath("//*[@id='enkel_sokfalt']"));
             if (searchField.exists()) {
                 searchField.setValue("i0015n");
                 logger.info("Successfully opened the 'Examination' dropdown");
@@ -106,13 +107,14 @@ public class LTUWebfunctions {
             return false;
         }
         try {
-        sleep(5000);
+            sleep(5000);
 
-        // Find all the list items using the specified XPath
-        // Locate all PDF links with wildcard
-        ElementsCollection listItems = $$x("//a[contains(@href, 'schema.ltu.se') and contains(@href, '/setup/')]");
-
-
+            // Find all the list items using the specified XPath
+            // Locate all PDF links with wildcard
+            ElementsCollection listItems = $$x("//a[contains(@href, 'schema.ltu.se') and contains(@href, '/setup/')]");
+            for (SelenideElement element : listItems) {
+                System.out.println(element.getText());  // Log the element's text
+            }
             listItems.first().click();
             logger.info("Opened first link.");
         } catch (Exception e) {
@@ -121,17 +123,22 @@ public class LTUWebfunctions {
         }
 
         try {
-        switchTo().window("Schema");
 
-        // Take a screenshot of the whole page
-        File screenshot = Screenshots.takeScreenShotAsFile();
+            switchTo().window("Schema");
 
-        // Specify the path and name of the screenshot file
-        String destinationDirectoryPath = System.getProperty("user.dir") + File.separator + "target" + File.separator + "screenshots";
-        String screenshotPath = destinationDirectoryPath + File.separator + "final_examination.jpg";
 
-        // Convert the screenshot to a JPG file
-        File screenshotJpg = new File(screenshotPath);
+            ElementsCollection elements = $$x("/html/body/table[1]/tbody/tr[2]/td/table[2]/tbody/tr[4]");
+            System.out.println(elements);
+
+            // Take a screenshot of the whole page
+            File screenshot = Screenshots.takeScreenShotAsFile();
+
+            // Specify the path and name of the screenshot file
+            String destinationDirectoryPath = System.getProperty("user.dir") + File.separator + "target" + File.separator + "screenshots";
+            String screenshotPath = destinationDirectoryPath + File.separator + "final_examination.jpg";
+
+            // Convert the screenshot to a JPG file
+            File screenshotJpg = new File(screenshotPath);
 
             // Save the screenshot as a JPG file
             assert screenshot != null;
@@ -145,16 +152,15 @@ public class LTUWebfunctions {
             return false;
         }
         try {
-        sleep(5000);
+            sleep(5000);
 
-        Selenide.closeWindow(); // Close the "Schema" window
-        Selenide.switchTo().window("KronoX Web");
+            Selenide.closeWindow(); // Close the "Schema" window
+            Selenide.switchTo().window("KronoX Web");
 
-        Selenide.closeWindow(); // Close the "KronoX Web" window
+            Selenide.closeWindow(); // Close the "KronoX Web" window
 
-       Set<String> remainingWindows = WebDriverRunner.getWebDriver().getWindowHandles();
-       switchTo().window(remainingWindows.iterator().next()); // Switch back to the original tab
-
+            Set<String> remainingWindows = WebDriverRunner.getWebDriver().getWindowHandles();
+            switchTo().window(remainingWindows.iterator().next()); // Switch back to the original tab
 
             Thread.sleep(5000);
             return true;
@@ -193,7 +199,7 @@ public class LTUWebfunctions {
                 throw new LoginException("Failed to log in. Invalid credentials or login page not loaded.");
             }
         } catch (Exception e) {
-            logger.error("Failed to log in due to exception: {}", e.getMessage());
+            logger.error("ERROR: Failed to log in due to exception: {}", e.getMessage());
             return false;
         }
 
@@ -201,6 +207,9 @@ public class LTUWebfunctions {
 
     public static boolean transcriptDownload() {
         try {
+            sleep(3000);
+
+
             // Open "Transcripts" link in a new tab
             SelenideElement transcriptsLink = $x("//a[contains(text(), 'Transcripts') or contains(text(), 'Intyg')]");
             if (transcriptsLink.exists()) {
@@ -209,10 +218,10 @@ public class LTUWebfunctions {
                 switchTo().window("Studentwebb");
                 logger.info("Successfully opened Ladok website in a new tab");
             } else {
-                logger.error("Cannot open Ladok website.");
+                logger.error("ERROR: Cannot open Ladok website.");
             }
         } catch (Exception e) {
-            logger.error("Cannot locate Ladok website.");
+            logger.error("ERROR: Cannot locate Ladok website.");
             return false;
         }
 
@@ -224,7 +233,7 @@ public class LTUWebfunctions {
                 logger.info("Clicked on Ladok login button.");
             }
         } catch (Exception e) {
-            logger.error("Failed to click on Ladok login button.");
+            logger.error("ERROR: Failed to click on Ladok login button.");
             return false;
         }
 
@@ -240,28 +249,37 @@ public class LTUWebfunctions {
                     institutionLink.click();
                     logger.info("Successfully opened LTU Ladok registry");
                 } else {
-                    logger.error("Cannot locate Luleå on search list.");
+                    logger.error("ERROR: Cannot locate Luleå on search list.");
                 }
             } else {
-                logger.error("Cannot find Search bar.");
+                logger.error("ERROR: Cannot find Search bar.");
             }
         } catch (Exception e) {
-            logger.error("Cannot locate search input on Ladok webpage.");
+            logger.error("ERROR: Cannot locate search input on Ladok webpage.");
             return false;
         }
 
-        sleep(15000);
+        sleep(10000);
 
+        SelenideElement cookieButton = $(By.xpath("/html/body/ladok-root/ladok-cookie-banner/div/div/div/div/div/div[2]/button[1]"));
 
-        int windowWidth = WebDriverRunner.getWebDriver().manage().window().getSize().getWidth();
+        try {
+            if (cookieButton.exists()) {
+                cookieButton.click();
+            } else {
+                logger.error("ERROR: Cannot accept cookies on Ladok website.");
+            }
+        } catch (Exception e) {
+            logger.error("ERROR: Cannot locate Ladok website.");
+        }
 
-        System.out.println("Window width is " + windowWidth);
-
+        SelenideElement button_element = $(By.xpath("//*[@id=\"sticky-header\"]/ladok-top-meny/div/div/div[2]"));
+        button_element.shouldBe(Condition.visible); // Optional: add additional conditions if needed
         // Locate the link element
         SelenideElement transcriptsLink = $x("//a[contains(text(), 'Transcripts') or contains(text(), 'Intyg')]");
 
         try {
-            if (windowWidth < 1600) {
+            if (button_element.is(Condition.visible)) {
                 logger.info("Mobile menu button is showing.");
                 SelenideElement mobileMenuButton = $x("//button[@role='button']");
                 mobileMenuButton.click();
@@ -273,10 +291,10 @@ public class LTUWebfunctions {
                 transcriptsLink.click();
                 logger.info("Successfully opened transcripts");
             } else {
-                logger.error("Cannot open Transcripts");
+                logger.error("ERROR: Cannot open Transcripts");
             }
         } catch (Exception e) {
-            logger.error("Cannot locate Ladok webpage.");
+            logger.error("ERROR: Cannot locate Ladok webpage.");
             return false;
         }
 
@@ -295,24 +313,22 @@ public class LTUWebfunctions {
                 transcriptsButton.click();
                 logger.info("Successfully created transcript.");
             } else {
-                logger.error("Cannot create transcripts");
+                logger.error("ERROR: Cannot create transcripts");
             }
         } catch (Exception e) {
-            logger.error("Error creating the transcripts.");
+            logger.error("ERROR: Error creating the transcripts.");
             return false;
         }
         /*
          * Opens dropdown and selects the correct option, then downloads the document.
          */
 
-
-        // Open the dropdown
         try {
             SelenideElement option = $x("//*[@id=\"intygstyp\"]/option[2]");
             option.click();
             logger.info("Clicked on option in dropdown menu");
         } catch (Exception e) {
-            logger.error("Cannot find dropdown menu");
+            logger.error("ERROR: Cannot find dropdown menu");
             return false;
         }
 
@@ -327,10 +343,10 @@ public class LTUWebfunctions {
                 createTranscriptsButton.click();
                 logger.info("Downloaded certificate of registration successfully.");
             } else {
-                logger.error("Cannot locate button to create certificate of registration.");
+                logger.error("ERROR: Cannot locate button to create certificate of registration.");
             }
         } catch (Exception e) {
-            logger.error("Cannot locate dropdown option for registration.");
+            logger.error("ERROR: Cannot locate dropdown option for registration.");
             return false;
         }
 
@@ -351,7 +367,7 @@ public class LTUWebfunctions {
                     logger.info("Website not updated, waiting 2 seconds.");
                 }
             } catch (Exception e) {
-                logger.error("Took too long time");
+                logger.error("ERROR: Took too long time");
                 return false;
             }
             // Finds and downloads the first link, which should be latest created transcript.
@@ -368,10 +384,10 @@ public class LTUWebfunctions {
                     File downloadedFile = download(link);
                     logger.info("Downloading transcripts. File URL: " + downloadedFile);
                 } else {
-                    logger.error("No PDF links found to download transcripts.");
+                    logger.error("ERROR: No PDF links found to download transcripts.");
                 }
             } catch (Exception e) {
-                logger.error("Error occurred while downloading transcripts: {}", e.getMessage());
+                logger.error("ERROR: Error occurred while downloading transcripts: {}", e.getMessage());
             }
 
             sleep(8000);
@@ -381,20 +397,21 @@ public class LTUWebfunctions {
         }
         return true;
     }
+
     static boolean syllabusDownload() {
         try {
             sleep(2000);
+            acceptCookies();
             SelenideElement utbildningMenu = $$(byXpath("//a[@class='toggleTopMenu']")).get(1);
             if (utbildningMenu.exists()) {
                 utbildningMenu.click();
             } else {
-                logger.error("Failed to find and click on 'Utbildning'");
+                logger.error("ERROR: Failed to find and click on 'Utbildning'");
             }
         } catch (Exception e) {
-            logger.error("Failed to click on 'Utbildning'" );
+            logger.error("ERROR: Failed to click on 'Utbildning'" );
             return false;
         }
-
 
         try {
             sleep(2000);
@@ -404,20 +421,20 @@ public class LTUWebfunctions {
                 courseLink.click();
                 logger.info("Successfully clicked on 'Kurskatalog - programstudenter »'");
             } else {
-                logger.error("Failed to find and click on 'Kurskatalog - programstudenter »'");
+                logger.error("ERROR: Failed to find and click on 'Kurskatalog - programstudenter »'");
             }
         } catch (Exception e) {
-            logger.error("Failed to open course webpage.");
+            logger.error("ERROR: Failed to open course webpage.");
             return false;
         }
 
         try {
             sleep(2000);
             SelenideElement searchInput = $(byXpath("//input[@id='cludo-search-bar-input']"));
-            searchInput.setValue("Test av IT");
+            searchInput.setValue("I0015N");
             logger.info("Successfully filled in the search term 'Test av IT'");
         } catch (Exception e) {
-            logger.error("Failed to fill in the search term 'Test av IT'");
+            logger.error("ERROR: Failed to fill in the search term 'Test av IT'");
             return false;
         }
 
@@ -428,7 +445,7 @@ public class LTUWebfunctions {
                 logger.info("Successfully clicked on the search button.");
             }
         } catch (Exception e) {
-            logger.error("Failed to click on the search button");
+            logger.error("ERROR: Failed to click on the search button");
             return false;
         }
 
@@ -439,10 +456,10 @@ public class LTUWebfunctions {
                 searchResult.click();
                 logger.info("Successfully clicked on the search result 'Test av IT-system'");
             } else {
-                logger.error("Failed to find and click on the search result 'Test av IT-system'");
+                logger.error("ERROR: Failed to find and click on the search result 'Test av IT-system'");
             }
         } catch (Exception e) {
-            logger.error("Failed to open the search result");
+            logger.error("ERROR: Failed to open the search result");
             return false;
         }
 
@@ -453,10 +470,10 @@ public class LTUWebfunctions {
                 syllabusLink.click();
                 logger.info("Successfully opened the syllabus page");
             } else {
-                logger.error("Failed to open the syllabus page");
+                logger.error("ERROR: Failed to open the syllabus page");
             }
         } catch (Exception e) {
-            logger.error("Failed to open the syllabus webpage.");
+            logger.error("ERROR: Failed to open the syllabus webpage.");
             return false;
         }
 
@@ -473,16 +490,10 @@ public class LTUWebfunctions {
 
             return true;
         } catch (Exception e) {
-            logger.error("Error occurred while downloading the syllabus: {}", e.getMessage());
+            logger.error("ERROR: Error occurred while downloading the syllabus: {}", e.getMessage());
             return false;
         }
     }
 
 
 }
-
-
-
-
-
-
