@@ -1,0 +1,172 @@
+2023-05-20 14:07:11.259 [main] INFO  org.selenide.Main - Starting Logger
+2023-05-20 14:07:13.906 [main] INFO  c.c.s.i.WebDriverThreadLocalContainer - No webdriver is bound to current thread: 1 - let's create a new webdriver
+2023-05-20 14:07:13.980 [main] INFO  c.codeborne.selenide.impl.FileHelper - Creating folder: C:\Users\CarlO\OneDrive\Dokument\GitHub\Second-Java-Project\build\downloads\1684584433951_16680_1
+2023-05-20 14:07:15.524 [main] INFO  i.g.bonigarcia.wdm.WebDriverManager - Using chromedriver 113.0.5672.63 (resolved driver for Chrome 113)
+2023-05-20 14:07:15.556 [main] INFO  i.g.bonigarcia.wdm.WebDriverManager - Exporting webdriver.chrome.driver as C:\Users\CarlO\.cache\selenium\chromedriver\win32\113.0.5672.63\chromedriver.exe
+2023-05-20 14:07:15.702 [main] INFO  c.c.s.w.SelenideNettyClientFactory - Changed readTimeout from PT3M to PT1M30S
+2023-05-20 14:07:19.001 [main] INFO  c.c.s.w.SelenideNettyClientFactory - Changed readTimeout from PT3M to PT1M30S
+2023-05-20 14:07:19.014 [main] INFO  c.c.s.w.SelenideNettyClientFactory - Changed readTimeout from PT3M to PT1M30S
+2023-05-20 14:07:19.088 [main] INFO  c.c.s.webdriver.WebDriverFactory - BrowserName=chrome Version=113.0.5672.127 Platform=WINDOWS
+2023-05-20 14:07:19.088 [main] INFO  c.c.s.webdriver.WebDriverFactory - Selenide v. 6.12.4
+2023-05-20 14:07:19.088 [main] INFO  c.c.s.webdriver.WebDriverFactory - Selenium WebDriver v. 4.8.1 build revision: 8ebccac989
+2023-05-20 14:07:19.088 [main] INFO  c.c.s.d.CreateDriverCommand - Created webdriver in thread 1: ChromeDriver -> ChromeDriver: chrome on WINDOWS (8c5bb8ee80413cd58d20ee8db31f4856)
+2023-05-20 14:07:19.090 [main] INFO  c.c.s.d.DisposablesRegistry - Register WebDriverInstance[config=StaticConfig,webDriver=ChromeDriver: chrome on WINDOWS (8c5bb8ee80413cd58d20ee8db31f4856),proxy=null,downloadsFolder=C:\Users\CarlO\OneDrive\Dokument\GitHub\Second-Java-Project\build\downloads\1684584433951_16680_1] in 1 [size=1]
+2023-05-20 14:07:19.090 [main] INFO  c.c.s.d.DisposablesRegistry - Add shutdown hook in 1 [size=1]
+2023-05-20 14:07:19.770 [main] INFO  org.selenide.LTUWebfunctions - Finding and accepting all cookies on website
+2023-05-20 14:07:20.022 [main] INFO  org.selenide.LTUWebfunctions - Successfully accepted cookies on website.
+2023-05-20 14:07:20.478 [main] INFO  org.selenide.LTUWebfunctions - Opened 'Student' page.
+2023-05-20 14:07:20.949 [main] INFO  org.selenide.LTUWebfunctions - Clicked on 'Logga in' button.
+2023-05-20 14:07:23.604 [main] INFO  org.selenide.LTUWebfunctions - Successfully logged in
+2023-05-20 14:07:24.454 [main] INFO  org.selenide.LTUWebfunctions - Successfully opened Ladok website in a new tab
+2023-05-20 14:07:25.705 [main] INFO  org.selenide.LTUWebfunctions - Clicked on Ladok login button.
+2023-05-20 14:07:31.099 [main] INFO  org.selenide.LTUWebfunctions - Successfully opened LTU Ladok registry
+2023-05-20 14:07:46.118 [main] INFO  org.selenide.LTUWebfunctions - Mobile menu button is showing.
+2023-05-20 14:07:46.377 [main] INFO  org.selenide.LTUWebfunctions - Successfully opened transcripts
+2023-05-20 14:07:51.944 [main] INFO  org.selenide.LTUWebfunctions - Successfully created transcript.
+2023-05-20 14:07:52.035 [main] INFO  org.selenide.LTUWebfunctions - Clicked on option in dropdown menu
+2023-05-20 14:07:52.537 [main] INFO  org.selenide.LTUWebfunctions - Downloaded certificate of registration successfully.
+2023-05-20 14:07:54.573 [main] INFO  org.selenide.LTUWebfunctions - Website not updated, waiting 2 seconds.
+2023-05-20 14:07:54.595 [main] INFO  org.selenide.LTUWebfunctions - Correct window for downloading pdf.
+2023-05-20 14:07:54.626 [main] INFO  org.selenide.LTUWebfunctions - Located 26 links
+2023-05-20 14:07:54.879 [main] INFO  c.codeborne.selenide.impl.FileHelper - Creating folder: C:\Users\CarlO\OneDrive\Dokument\GitHub\Second-Java-Project\build\downloads\c587be7f-c36a-48f1-ba36-7ba0f596317f
+2023-05-20 14:07:55.062 [main] INFO  org.selenide.LTUWebfunctions - Downloading transcripts. File URL: C:\Users\CarlO\OneDrive\Dokument\GitHub\Second-Java-Project\build\downloads\c587be7f-c36a-48f1-ba36-7ba0f596317f\Intyg.pdf
+2023-05-20 14:08:03.148 [main] INFO  org.selenide.LTUWebfunctions - Correct website is open
+2023-05-20 14:08:03.235 [main] INFO  org.selenide.LTUWebfunctions - Successfully opened the 'Examination' dropdown
+2023-05-20 14:08:03.334 [main] INFO  org.selenide.LTUWebfunctions - Successfully clicked the 'Examination schedule' button
+2023-05-20 14:08:04.199 [main] INFO  org.selenide.LTUWebfunctions - Successfully opened the 'Examination' dropdown
+2023-05-20 14:08:04.280 [main] INFO  org.selenide.LTUWebfunctions - Searching for i0015n exams
+2023-05-20 14:08:09.420 [main] INFO  org.selenide.LTUWebfunctions - Opened first link.
+2023-05-20 14:08:10.321 [main] INFO  org.selenide.LTUWebfunctions - Image saved at C:\Users\CarlO\OneDrive\Dokument\GitHub\Second-Java-Project\target\screenshots\final_examination.jpg
+2023-05-20 14:08:27.252 [main] INFO  org.selenide.LTUWebfunctions - Successfully opened course page
+2023-05-20 14:08:29.421 [main] INFO  org.selenide.LTUWebfunctions - Successfully opened syllabus page
+2023-05-20 14:08:30.851 [main] INFO  c.codeborne.selenide.impl.FileHelper - Creating folder: C:\Users\CarlO\OneDrive\Dokument\GitHub\Second-Java-Project\build\downloads\0f831728-7fb6-4658-8b9f-5c66fd2f6fa7
+2023-05-20 14:08:31.113 [main] INFO  org.selenide.LTUWebfunctions - Downloading syllabus File
+2023-05-20 14:08:31.181 [main] INFO  org.selenide.Main - Web actions completed successfully.
+2023-05-20 14:08:31.182 [Thread-2] INFO  c.c.s.d.DisposablesRegistry - Run cleanup: size=1
+2023-05-20 14:08:31.186 [Thread-2] INFO  c.codeborne.selenide.impl.FileHelper - Deleted empty folder: C:\Users\CarlO\OneDrive\Dokument\GitHub\Second-Java-Project\build\downloads\1684584433951_16680_1
+2023-05-20 14:08:31.186 [Thread-2] INFO  c.c.s.d.CloseDriverCommand - Close webdriver: 38 -> ChromeDriver: chrome on WINDOWS (8c5bb8ee80413cd58d20ee8db31f4856)...
+2023-05-20 14:08:31.204 [Dead threads watchdog] INFO  c.c.s.impl.DeadThreadsWatchdog - Thread 1 is dead. Let's close its webdriver ChromeDriver: chrome on WINDOWS (8c5bb8ee80413cd58d20ee8db31f4856).
+2023-05-20 14:08:31.205 [Dead threads watchdog] INFO  c.c.s.d.CloseDriverCommand - Close webdriver: 39 -> ChromeDriver: chrome on WINDOWS (8c5bb8ee80413cd58d20ee8db31f4856)...
+2023-05-20 14:08:31.645 [Thread-2] INFO  c.c.s.d.CloseDriverCommand - Closed webdriver 38 in 459 ms
+2023-05-20 14:08:31.645 [Dead threads watchdog] INFO  c.c.s.d.CloseDriverCommand - Closed webdriver 39 in 440 ms
+2023-05-20 14:08:31.646 [Thread-2] INFO  c.c.s.d.DisposablesRegistry - Finished cleanup
+2023-05-20 14:08:31.646 [Dead threads watchdog] INFO  c.c.s.d.DisposablesRegistry - Unregister WebDriverInstance[config=StaticConfig,webDriver=ChromeDriver: chrome on WINDOWS (null),proxy=null,downloadsFolder=C:\Users\CarlO\OneDrive\Dokument\GitHub\Second-Java-Project\build\downloads\1684584433951_16680_1] in 39 [size=0]
+2023-05-20 14:24:18.726 [main] INFO  org.selenide.Main - Starting Logger
+2023-05-20 14:24:21.608 [main] INFO  c.c.s.i.WebDriverThreadLocalContainer - No webdriver is bound to current thread: 1 - let's create a new webdriver
+2023-05-20 14:24:21.678 [main] INFO  c.codeborne.selenide.impl.FileHelper - Creating folder: C:\Users\CarlO\OneDrive\Dokument\GitHub\Second-Java-Project\build\downloads\1684585461649_3600_1
+2023-05-20 14:24:22.334 [main] INFO  i.g.bonigarcia.wdm.WebDriverManager - Using chromedriver 113.0.5672.63 (resolved driver for Chrome 113)
+2023-05-20 14:24:22.364 [main] INFO  i.g.bonigarcia.wdm.WebDriverManager - Exporting webdriver.chrome.driver as C:\Users\CarlO\.cache\selenium\chromedriver\win32\113.0.5672.63\chromedriver.exe
+2023-05-20 14:24:22.477 [main] INFO  c.c.s.w.SelenideNettyClientFactory - Changed readTimeout from PT3M to PT1M30S
+2023-05-20 14:24:24.952 [main] INFO  c.c.s.w.SelenideNettyClientFactory - Changed readTimeout from PT3M to PT1M30S
+2023-05-20 14:24:24.969 [main] INFO  c.c.s.w.SelenideNettyClientFactory - Changed readTimeout from PT3M to PT1M30S
+2023-05-20 14:24:25.038 [main] INFO  c.c.s.webdriver.WebDriverFactory - BrowserName=chrome Version=113.0.5672.127 Platform=WINDOWS
+2023-05-20 14:24:25.038 [main] INFO  c.c.s.webdriver.WebDriverFactory - Selenide v. 6.12.4
+2023-05-20 14:24:25.038 [main] INFO  c.c.s.webdriver.WebDriverFactory - Selenium WebDriver v. 4.8.1 build revision: 8ebccac989
+2023-05-20 14:24:25.038 [main] INFO  c.c.s.d.CreateDriverCommand - Created webdriver in thread 1: ChromeDriver -> ChromeDriver: chrome on WINDOWS (1ddb0d6a625800f49656ec35980f78c8)
+2023-05-20 14:24:25.040 [main] INFO  c.c.s.d.DisposablesRegistry - Register WebDriverInstance[config=StaticConfig,webDriver=ChromeDriver: chrome on WINDOWS (1ddb0d6a625800f49656ec35980f78c8),proxy=null,downloadsFolder=C:\Users\CarlO\OneDrive\Dokument\GitHub\Second-Java-Project\build\downloads\1684585461649_3600_1] in 1 [size=1]
+2023-05-20 14:24:25.041 [main] INFO  c.c.s.d.DisposablesRegistry - Add shutdown hook in 1 [size=1]
+2023-05-20 14:24:25.701 [main] INFO  org.selenide.LTUWebfunctions - Finding and accepting all cookies on website
+2023-05-20 14:24:25.993 [main] INFO  org.selenide.LTUWebfunctions - Successfully accepted cookies on website.
+2023-05-20 14:24:26.511 [main] INFO  org.selenide.LTUWebfunctions - Opened 'Student' page.
+2023-05-20 14:24:26.985 [main] INFO  org.selenide.LTUWebfunctions - Clicked on 'Logga in' button.
+2023-05-20 14:24:29.221 [main] INFO  org.selenide.LTUWebfunctions - Successfully logged in
+2023-05-20 14:24:29.865 [main] INFO  org.selenide.LTUWebfunctions - Successfully opened Ladok website in a new tab
+2023-05-20 14:24:30.563 [main] INFO  org.selenide.LTUWebfunctions - Clicked on Ladok login button.
+2023-05-20 14:24:35.852 [main] ERROR org.selenide.LTUWebfunctions - Cannot locate Luleå on search list.
+2023-05-20 14:24:50.868 [main] ERROR org.selenide.Main - Error during web actions:
+org.openqa.selenium.NoSuchWindowException: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=113.0.5672.127)
+Build info: version: '4.8.1', revision: '8ebccac989'
+System info: os.name: 'Windows 11', os.arch: 'amd64', os.version: '10.0', java.version: '17.0.6'
+Driver info: org.openqa.selenium.chrome.ChromeDriver
+Command: [1ddb0d6a625800f49656ec35980f78c8, getCurrentWindowSize {}]
+Capabilities {acceptInsecureCerts: true, browserName: chrome, browserVersion: 113.0.5672.127, chrome: {chromedriverVersion: 113.0.5672.63 (0e1a4471d5ae..., userDataDir: C:\Users\CarlO\AppData\Loca...}, goog:chromeOptions: {debuggerAddress: localhost:55123}, networkConnectionEnabled: false, pageLoadStrategy: normal, platformName: WINDOWS, proxy: Proxy(), se:cdp: ws://localhost:55123/devtoo..., se:cdpVersion: 113.0.5672.127, setWindowRect: true, strictFileInteractability: false, timeouts: {implicit: 0, pageLoad: 300000, script: 30000}, unhandledPromptBehavior: accept, webauthn:extension:credBlob: true, webauthn:extension:largeBlob: true, webauthn:extension:minPinLength: true, webauthn:extension:prf: true, webauthn:virtualAuthenticators: true}
+Session ID: 1ddb0d6a625800f49656ec35980f78c8
+	at java.base/jdk.internal.reflect.NativeConstructorAccessorImpl.newInstance0(Native Method)
+	at java.base/jdk.internal.reflect.NativeConstructorAccessorImpl.newInstance(NativeConstructorAccessorImpl.java:77)
+	at java.base/jdk.internal.reflect.DelegatingConstructorAccessorImpl.newInstance(DelegatingConstructorAccessorImpl.java:45)
+	at java.base/java.lang.reflect.Constructor.newInstanceWithCaller(Constructor.java:499)
+	at java.base/java.lang.reflect.Constructor.newInstance(Constructor.java:480)
+	at org.openqa.selenium.remote.codec.w3c.W3CHttpResponseCodec.createException(W3CHttpResponseCodec.java:200)
+	at org.openqa.selenium.remote.codec.w3c.W3CHttpResponseCodec.decode(W3CHttpResponseCodec.java:133)
+	at org.openqa.selenium.remote.codec.w3c.W3CHttpResponseCodec.decode(W3CHttpResponseCodec.java:53)
+	at org.openqa.selenium.remote.HttpCommandExecutor.execute(HttpCommandExecutor.java:184)
+	at org.openqa.selenium.remote.service.DriverCommandExecutor.invokeExecute(DriverCommandExecutor.java:167)
+	at org.openqa.selenium.remote.service.DriverCommandExecutor.execute(DriverCommandExecutor.java:142)
+	at org.openqa.selenium.remote.RemoteWebDriver.execute(RemoteWebDriver.java:543)
+	at org.openqa.selenium.remote.RemoteWebDriver.execute(RemoteWebDriver.java:598)
+	at org.openqa.selenium.remote.RemoteWebDriver.execute(RemoteWebDriver.java:602)
+	at org.openqa.selenium.remote.RemoteWebDriver$RemoteWebDriverOptions$RemoteWindow.getSize(RemoteWebDriver.java:920)
+	at org.selenide.LTUWebfunctions.transcriptDownload(LTUWebfunctions.java:247)
+	at org.selenide.Main.performWebActions(Main.java:68)
+	at org.selenide.Main.main(Main.java:30)
+2023-05-20 14:24:50.870 [Thread-2] INFO  c.c.s.d.DisposablesRegistry - Run cleanup: size=1
+2023-05-20 14:24:50.873 [Thread-2] INFO  c.codeborne.selenide.impl.FileHelper - Deleted empty folder: C:\Users\CarlO\OneDrive\Dokument\GitHub\Second-Java-Project\build\downloads\1684585461649_3600_1
+2023-05-20 14:24:50.874 [Thread-2] INFO  c.c.s.d.CloseDriverCommand - Close webdriver: 39 -> ChromeDriver: chrome on WINDOWS (1ddb0d6a625800f49656ec35980f78c8)...
+2023-05-20 14:24:50.918 [Dead threads watchdog] INFO  c.c.s.impl.DeadThreadsWatchdog - Thread 1 is dead. Let's close its webdriver ChromeDriver: chrome on WINDOWS (1ddb0d6a625800f49656ec35980f78c8).
+2023-05-20 14:24:50.919 [Dead threads watchdog] INFO  c.c.s.d.CloseDriverCommand - Close webdriver: 40 -> ChromeDriver: chrome on WINDOWS (1ddb0d6a625800f49656ec35980f78c8)...
+2023-05-20 14:24:51.125 [Thread-2] INFO  c.c.s.d.CloseDriverCommand - Closed webdriver 39 in 251 ms
+2023-05-20 14:24:51.125 [Dead threads watchdog] INFO  c.c.s.d.CloseDriverCommand - Closed webdriver 40 in 206 ms
+2023-05-20 14:24:51.125 [Thread-2] INFO  c.c.s.d.DisposablesRegistry - Finished cleanup
+2023-05-20 14:24:51.125 [Dead threads watchdog] INFO  c.c.s.d.DisposablesRegistry - Unregister WebDriverInstance[config=StaticConfig,webDriver=ChromeDriver: chrome on WINDOWS (null),proxy=null,downloadsFolder=C:\Users\CarlO\OneDrive\Dokument\GitHub\Second-Java-Project\build\downloads\1684585461649_3600_1] in 40 [size=0]
+2023-05-26 19:20:31.003 [main] INFO  org.selenide.Main - Starting Logger
+2023-05-26 19:34:42.098 [main] INFO  org.selenide.Main - Starting Logger
+2023-05-26 19:35:34.801 [main] INFO  c.c.s.i.WebDriverThreadLocalContainer - No webdriver is bound to current thread: 1 - let's create a new webdriver
+2023-05-26 19:35:34.854 [main] INFO  c.codeborne.selenide.impl.FileHelper - Creating folder: C:\Users\CarlO\OneDrive\Dokument\GitHub\Second-Java-Project\build\downloads\1685122534832_9732_1
+2023-05-26 19:35:36.501 [main] INFO  i.g.bonigarcia.wdm.WebDriverManager - Using chromedriver 113.0.5672.63 (resolved driver for Chrome 113)
+2023-05-26 19:35:36.523 [main] INFO  i.g.bonigarcia.wdm.WebDriverManager - Exporting webdriver.chrome.driver as C:\Users\CarlO\.cache\selenium\chromedriver\win32\113.0.5672.63\chromedriver.exe
+2023-05-26 19:35:36.668 [main] INFO  c.c.s.w.SelenideNettyClientFactory - Changed readTimeout from PT3M to PT1M30S
+2023-05-26 19:35:39.883 [main] INFO  c.c.s.w.SelenideNettyClientFactory - Changed readTimeout from PT3M to PT1M30S
+2023-05-26 19:35:39.902 [main] INFO  c.c.s.w.SelenideNettyClientFactory - Changed readTimeout from PT3M to PT1M30S
+2023-05-26 19:35:39.984 [main] INFO  c.c.s.webdriver.WebDriverFactory - BrowserName=chrome Version=113.0.5672.127 Platform=WINDOWS
+2023-05-26 19:35:39.985 [main] INFO  c.c.s.webdriver.WebDriverFactory - Selenide v. 6.12.4
+2023-05-26 19:35:39.985 [main] INFO  c.c.s.webdriver.WebDriverFactory - Selenium WebDriver v. 4.8.1 build revision: 8ebccac989
+2023-05-26 19:35:39.985 [main] INFO  c.c.s.d.CreateDriverCommand - Created webdriver in thread 1: ChromeDriver -> ChromeDriver: chrome on WINDOWS (7c205fdce509050cfc621ca9b9709191)
+2023-05-26 19:35:39.987 [main] INFO  c.c.s.d.DisposablesRegistry - Register WebDriverInstance[config=StaticConfig,webDriver=ChromeDriver: chrome on WINDOWS (7c205fdce509050cfc621ca9b9709191),proxy=null,downloadsFolder=C:\Users\CarlO\OneDrive\Dokument\GitHub\Second-Java-Project\build\downloads\1685122534832_9732_1] in 1 [size=1]
+2023-05-26 19:35:39.987 [main] INFO  c.c.s.d.DisposablesRegistry - Add shutdown hook in 1 [size=1]
+2023-05-26 19:35:40.795 [main] INFO  org.selenide.LTUWebfunctions - Finding and accepting all cookies on website
+2023-05-26 19:35:41.072 [main] INFO  org.selenide.LTUWebfunctions - Successfully accepted cookies on website.
+2023-05-26 19:35:41.665 [main] INFO  org.selenide.LTUWebfunctions - Opened 'Student' page.
+2023-05-26 19:35:42.119 [main] INFO  org.selenide.LTUWebfunctions - Clicked on 'Logga in' button.
+2023-05-26 19:35:44.774 [main] INFO  org.selenide.LTUWebfunctions - Successfully logged in
+2023-05-26 19:35:48.446 [main] INFO  org.selenide.LTUWebfunctions - Successfully opened Ladok website in a new tab
+2023-05-26 19:35:49.031 [main] INFO  org.selenide.LTUWebfunctions - Clicked on Ladok login button.
+2023-05-26 19:35:54.386 [main] INFO  org.selenide.LTUWebfunctions - Successfully opened LTU Ladok registry
+2023-05-26 19:36:04.612 [main] INFO  org.selenide.LTUWebfunctions - Mobile menu button is showing.
+2023-05-26 19:36:04.895 [main] INFO  org.selenide.LTUWebfunctions - Successfully opened transcripts
+2023-05-26 19:36:10.216 [main] INFO  org.selenide.LTUWebfunctions - Successfully created transcript.
+2023-05-26 19:36:10.311 [main] INFO  org.selenide.LTUWebfunctions - Clicked on option in dropdown menu
+2023-05-26 19:36:10.692 [main] INFO  org.selenide.LTUWebfunctions - Downloaded certificate of registration successfully.
+2023-05-26 19:36:12.734 [main] INFO  org.selenide.LTUWebfunctions - Website not updated, waiting 2 seconds.
+2023-05-26 19:36:12.754 [main] INFO  org.selenide.LTUWebfunctions - Correct window for downloading pdf.
+2023-05-26 19:36:12.785 [main] INFO  org.selenide.LTUWebfunctions - Located 27 links
+2023-05-26 19:36:13.030 [main] INFO  c.codeborne.selenide.impl.FileHelper - Creating folder: C:\Users\CarlO\OneDrive\Dokument\GitHub\Second-Java-Project\build\downloads\c7ae71c6-f5af-48f6-acf4-73784ddd9638
+2023-05-26 19:36:13.160 [main] INFO  org.selenide.LTUWebfunctions - Downloading transcripts. File URL: C:\Users\CarlO\OneDrive\Dokument\GitHub\Second-Java-Project\build\downloads\c7ae71c6-f5af-48f6-acf4-73784ddd9638\Intyg.pdf
+2023-05-26 19:36:21.268 [main] INFO  org.selenide.LTUWebfunctions - Correct website is open
+2023-05-26 19:36:21.365 [main] INFO  org.selenide.LTUWebfunctions - Successfully opened the 'Examination' dropdown
+2023-05-26 19:36:21.469 [main] INFO  org.selenide.LTUWebfunctions - Successfully clicked the 'Examination schedule' button
+2023-05-26 19:36:22.439 [main] INFO  org.selenide.LTUWebfunctions - Successfully opened the 'Examination' dropdown
+2023-05-26 19:36:22.519 [main] INFO  org.selenide.LTUWebfunctions - Searching for i0015n exams
+2023-05-26 19:36:27.847 [main] INFO  org.selenide.LTUWebfunctions - Opened first link.
+2023-05-26 19:36:28.794 [main] INFO  org.selenide.LTUWebfunctions - Image saved at C:\Users\CarlO\OneDrive\Dokument\GitHub\Second-Java-Project\target\screenshots\final_examination.jpg
+2023-05-26 19:36:41.024 [main] INFO  org.selenide.LTUWebfunctions - Finding and accepting all cookies on website
+2023-05-26 19:36:43.768 [main] INFO  org.selenide.LTUWebfunctions - Successfully clicked on 'Kurskatalog - programstudenter »'
+2023-05-26 19:36:45.980 [main] INFO  org.selenide.LTUWebfunctions - Successfully filled in the search term 'Test av IT'
+2023-05-26 19:36:46.564 [main] INFO  org.selenide.LTUWebfunctions - Successfully clicked on the search button.
+2023-05-26 19:36:48.673 [main] INFO  org.selenide.LTUWebfunctions - Successfully clicked on the search result 'Test av IT-system'
+2023-05-26 19:36:51.168 [main] INFO  org.selenide.LTUWebfunctions - Successfully opened the syllabus page
+2023-05-26 19:36:51.650 [main] INFO  c.codeborne.selenide.impl.FileHelper - Creating folder: C:\Users\CarlO\OneDrive\Dokument\GitHub\Second-Java-Project\build\downloads\90b4bbec-dfe0-44a9-be76-e57f8b54f9bd
+2023-05-26 19:36:51.847 [main] ERROR org.selenide.LTUWebfunctions - ERROR: Error occurred while downloading the syllabus: C:\Users\CarlO\OneDrive\Dokument\GitHub\Second-Java-Project\target\downloads\Kursplan_I0015N.pdf
+2023-05-26 19:36:51.850 [main] ERROR org.selenide.Main - Error during web actions:
+java.lang.Exception: Failed to download syllabus.
+	at org.selenide.Main.performWebActions(Main.java:77)
+	at org.selenide.Main.main(Main.java:30)
+2023-05-26 19:36:51.851 [Thread-2] INFO  c.c.s.d.DisposablesRegistry - Run cleanup: size=1
+2023-05-26 19:36:51.852 [Thread-2] INFO  c.c.s.d.CloseDriverCommand - Close webdriver: 38 -> ChromeDriver: chrome on WINDOWS (7c205fdce509050cfc621ca9b9709191)...
+2023-05-26 19:36:51.892 [Dead threads watchdog] INFO  c.c.s.impl.DeadThreadsWatchdog - Thread 1 is dead. Let's close its webdriver ChromeDriver: chrome on WINDOWS (7c205fdce509050cfc621ca9b9709191).
+2023-05-26 19:36:51.893 [Dead threads watchdog] INFO  c.c.s.d.CloseDriverCommand - Close webdriver: 39 -> ChromeDriver: chrome on WINDOWS (7c205fdce509050cfc621ca9b9709191)...
+2023-05-26 19:36:52.268 [Thread-2] INFO  c.c.s.d.CloseDriverCommand - Closed webdriver 38 in 416 ms
+2023-05-26 19:36:52.268 [Dead threads watchdog] INFO  c.c.s.d.CloseDriverCommand - Closed webdriver 39 in 375 ms
+2023-05-26 19:36:52.268 [Thread-2] INFO  c.c.s.d.DisposablesRegistry - Finished cleanup
+2023-05-26 19:36:52.268 [Dead threads watchdog] INFO  c.c.s.d.DisposablesRegistry - Unregister WebDriverInstance[config=StaticConfig,webDriver=ChromeDriver: chrome on WINDOWS (null),proxy=null,downloadsFolder=C:\Users\CarlO\OneDrive\Dokument\GitHub\Second-Java-Project\build\downloads\1685122534832_9732_1] in 39 [size=0]
